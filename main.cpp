@@ -1,0 +1,283 @@
+#include <iostream>
+#include <cmath>
+#include <flens/flens.cxx>
+#include <sndfile.hh>
+#include <sndfile.h>
+
+using namespace std;
+using namespace flens;
+
+typedef GeMatrix<FullStorage<double> > MatrixType;
+typedef DenseVector<Array<double> > VectorType;
+
+// 12AX7 parameters
+const double mi = 100.0f;
+const double E_x = 1.4f;
+const double K_g1 = 1060.0f;
+const double K_p = 600.0f;
+const double K_vb = 300.0f;
+const double g_cf = 0.00001;
+const double g_co = -0.2;
+
+// circuit parameters
+const double r_1 = 68000; const double g_1 = 1.0f / r_1;
+const double r_g1 = 1000000; const double g_g1 = 1.0f / r_g1;
+const double r_k1 = 2700; const double g_k1 = 1.0f / r_k1;
+const double r_a1 = 100000; const double g_a1 = 1.0f / r_a1;
+const double r_2 = 470000; const double g_2 = 1.0f / r_2;
+const double r_g2 = 1000000; const double g_g2 = 1.0f / r_g2;
+const double r_k2 = 1800; const double g_k2 = 1.0f / r_k2;
+const double r_a2 = 100000; const double g_a2 = 1.0f / r_a2;
+const double r_3 = 470000; const double g_3 = 1.0f / r_3;
+const double r_g3 = 470000; const double g_g3 = 1.0f / r_g3;
+const double r_k3 = 1800; const double g_k3 = 1.0f / r_k3;
+const double r_a3 = 100000; const double g_a3 = 1.0f / r_a3;
+const double r_4 = 470000; const double g_4 = 1.0f / r_4;
+const double r_g4 = 470000; const double g_g4 = 1.0f / r_g4;
+const double r_k4 = 1800; const double g_k4 = 1.0f / r_k4;
+const double r_a4 = 100000; const double g_a4 = 1.0f / r_a4;
+const double r_l = 4000000; const double g_l = 1.0f / r_l;
+const double c_1 = 0.000001f;
+const double c_2 = 0.000000022f;
+const double c_3 = 0.000000022f;
+const double c_4 = 0.000000022f;
+const double u_n = 400;
+const int equation_count = 15;
+
+// simulation parameters
+const int format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+const int channels = 1;
+const double f_s = 44100;
+const double t_s = 1.0 / f_s;
+const int buffer_seconds = 1;
+const int buffer_size = int(f_s) * buffer_seconds;
+const int process_seconds = 5;
+const char* in_file_name = "in16.wav"; 
+const char* out_file_name = "out.wav"; 
+
+// ------------------------------------------------------------------------------------------------
+// - TRIODE MODEL                                                                                 -
+// ------------------------------------------------------------------------------------------------
+// sign function
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+// grid current
+double i_g(double u_gk)
+{
+    if(u_gk >= g_co)
+        return g_cf * pow(u_gk - g_co, 1.5f);
+    return 0;
+}
+
+// a coefficient used in the Norman Koren's triode model
+double E_1(double u_ak, double u_gk)
+{
+    return u_ak / K_p * log(1.0f + exp(K_p * (1.0f / mi + u_gk / sqrt(K_vb + pow(u_ak, 2)))));
+}
+
+// triode plate current
+double i_a(double u_ak, double u_gk)
+{
+    double E_1_val = E_1(u_ak, u_gk);
+    return pow(E_1_val, E_x) / K_g1 * (1.0f + sgn(E_1_val));
+}
+// ------------------------------------------------------------------------------------------------
+// - THE END OF TRIODE MODEL                                                                      -
+// ------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------
+// - CIRCUIT MODEL                                                                                -
+// ------------------------------------------------------------------------------------------------
+// returns the value of a function present in the equation with index i
+double f(int i, VectorType &x, double u_in, VectorType &u_cp)
+{
+    double u_g1 = x(1),
+	   u_k1 = x(2),
+           u_a1 = x(3),
+           u_2 = x(4),
+           u_g2 = x(5),
+	   u_k2 = x(6),
+           u_a2 = x(7),
+           u_3 = x(8),
+           u_g3 = x(9),
+	   u_k3 = x(10),
+           u_a3 = x(11),
+           u_4 = x(12),
+           u_g4 = x(13),
+	   u_k4 = x(14),
+           u_a4 = x(15),
+           u_c1 = u_k1,
+           u_c2 = (u_2 - u_a1),
+           u_c3 = (u_3 - u_a2),
+           u_c4 = (u_4 - u_a3),
+           u_c1p = u_cp(1),
+           u_c2p = u_cp(2),
+           u_c3p = u_cp(3),
+           u_c4p = u_cp(4),
+           i_g1 = i_g(u_g1 - u_k1),
+           i_a1 = i_a(u_a1 - u_k1, u_g1 - u_k1),
+           i_g2 = i_g(u_g2 - u_k2),
+           i_a2 = i_a(u_a2 - u_k2, u_g2 - u_k2),
+           i_g3 = i_g(u_g3 - u_k3),
+           i_a3 = i_a(u_a3 - u_k3, u_g3 - u_k3),
+           i_g4 = i_g(u_g4 - u_k4),
+           i_a4 = i_a(u_a4 - u_k4, u_g4 - u_k4);
+
+    if(i == 1)
+        return (u_in - u_g1) * g_1 - u_g1 * g_g1 - i_g1;
+    if(i == 2)
+        return u_c1p - u_c1 - (u_k1 * g_k1 - i_a1 - i_g1) / (c_1 * f_s);
+    if(i == 3)
+        return (u_n - u_a1) * g_a1 - (u_2 - u_g2) * g_2 - i_a1;
+    if(i == 4)
+        return u_c2p - u_c2 - (u_2 - u_g2) * g_2 / (c_2 * f_s);
+    if(i == 5)
+        return (u_2 - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
+    if(i == 6)
+        return u_k2 * g_k2 - i_g2 - i_a2;
+    if(i == 7)
+        return (u_n - u_a2) * g_a2 - (u_3 - u_g3) * g_3 - i_a2;
+    if(i == 8)
+        return u_c3p - u_c3 - (u_3 - u_g3) * g_3 / (c_3 * f_s);
+    if(i == 9)
+        return (u_3 - u_g3) * g_3 - u_g3 * g_g3 - i_g3;
+    if(i == 10)
+        return u_k3 * g_k3 - i_g3 - i_a3;
+    if(i == 11)
+        return (u_n - u_a3) * g_a3 - (u_4 - u_g4) * g_4 - i_a3;
+    if(i == 12)
+        return u_c4p - u_c4 - (u_4 - u_g4) * g_4 / (c_4 * f_s);
+    if(i == 13)
+        return (u_4 - u_g4) * g_4 - u_g4 * g_g4 - i_g4;
+    if(i == 14)
+        return u_k4 * g_k4 - i_g4 - i_a4;
+    if(i == 15)
+        return (u_n - u_a4) * g_a4 - u_a4 * g_l - i_a4;
+}
+// ------------------------------------------------------------------------------------------------
+// - THE END OF CIRCUIT MODEL                                                                                -
+// ------------------------------------------------------------------------------------------------
+
+// returns a derivative by x_i of the a function present in the equation with index i
+double df(int equation, int x_i, VectorType &x, double u_in, VectorType &u_cp)
+{
+    long double h = 0.0000001f;
+    VectorType x_h = x;
+    x_h(x_i) += h;
+    return double((long double)(f(equation, x_h, u_in, u_cp) - f(equation, x, u_in, u_cp)) / h);
+}
+
+// calculates a Jacobian matrix
+void J(VectorType &x, double u_in, VectorType u_cp, MatrixType &j)
+{
+    for(int row = 1; row <= equation_count; ++row)
+        for(int column = 1; column <= equation_count; ++column)
+        {
+            j(row, column) = df(row, column, x, u_in, u_cp);
+        }
+}
+
+bool is_last_iteration(VectorType x1, VectorType x2, double epsilon = 0.00001f)
+{
+    for(int i = 1; i <= x1.length(); ++i)
+        if(abs(x1(i)- x2(i)) > epsilon)
+            return false;
+    return true;
+}
+
+int main()
+{
+    DenseVector<Array<int> > piv(equation_count);
+    VectorType F(equation_count);
+    MatrixType Jacobi(equation_count, equation_count);
+    VectorType x(equation_count);
+    VectorType u_cp(4);
+    VectorType x_prev(equation_count);
+
+    SndfileHandle in_file(in_file_name, SFM_READ, format, channels, int(f_s));
+    SndfileHandle out_file(out_file_name, SFM_WRITE, format, channels, int(f_s));
+
+    if(!in_file || !out_file)
+        return -1;
+
+    x = 0.0f, 2.5f, 390.0f, 0.0f,
+        0.0f, 7.0f, 380.0f, 0.0f,
+        0.0f, 7.0f, 380.0f, 0.0f,
+        0.0f, 7.0f, 380.0f;
+    float u_in;
+    u_cp = 2.5f, -360.0f, -360.0f, -360.0f;
+    float u_out;
+
+    for(int sample = 0; sample < f_s * 2; ++sample)
+    {
+        in_file.readf(&u_in, 1);
+    }
+    for(int sample = 0; sample < f_s * process_seconds; ++sample)
+    {
+        in_file.readf(&u_in, 1);
+
+        for(int iteration = 0; ; ++iteration)
+        {
+            // get the Jacobi's matrix
+            J(x, u_in, u_cp, Jacobi);
+
+            // inverse the Jacobi's matrix using LU decomposition
+            lapack::trf(Jacobi, piv);
+            lapack::tri(Jacobi, piv);
+
+            // get the F vector
+            for(int equation = 1; equation <= equation_count; ++equation)
+                F(equation) = f(equation, x, u_in, u_cp);
+
+            x_prev = x;
+            blas::mv(NoTrans, -1.0f, Jacobi, F, 1.0f, x);
+
+            if(is_last_iteration(x_prev, x))
+                break;
+        }
+
+        u_out = x(3);
+
+        double u_g1 = x(1),
+    	       u_k1 = x(2),
+               u_a1 = x(3),
+               u_2 = x(4),
+               u_g2 = x(5),
+               u_k2 = x(6),
+               u_a2 = x(7),
+               u_3 = x(8),
+               u_g3 = x(9),
+               u_k3 = x(10),
+               u_a3 = x(11),
+               u_4 = x(12),
+               u_g4 = x(13),
+               u_k4 = x(14),
+               u_a4 = x(15),
+               u_c1 = u_k1,
+               u_c2 = (u_2 - u_a1),
+               u_c3 = (u_3 - u_a2),
+               u_c4 = (u_4 - u_a3),
+               u_c1p = u_cp(1),
+               u_c2p = u_cp(2),
+               u_c3p = u_cp(3),
+               u_c4p = u_cp(4),
+               i_g1 = i_g(u_g1 - u_k1),
+               i_a1 = i_a(u_a1 - u_k1, u_g1 - u_k1);
+
+        u_cp(1) = u_k1;
+        u_cp(2) = u_c2;
+        u_cp(3) = u_c3;
+        u_cp(4) = u_c4;
+
+        cout << sample << ',' << 10 * u_in << ',' << x(3) - 290 << ',' << x(4) << ',' << x(7) << endl;
+
+
+        if(sample == 3300)
+            break;
+        //if(sample % 3000 == 0)
+        //    cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
+        //out_file.write(&u_out, 1);
+    }
+}
