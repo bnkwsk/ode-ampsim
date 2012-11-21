@@ -300,12 +300,18 @@ int main()
     u_cp = x_bias_1(1), x_bias_1(2), x_bias_2(2), x_bias_3(2);
 
     float u_in;
+    float u_in_next;
     float u_out;
 
+    x = x_0;
+    in_file.readf(&u_in_next, 1);
     for(int sample = 0; sample < f_s * process_seconds; ++sample)
     {
-        in_file.readf(&u_in, 1);
-        x = x_0;
+        u_in = u_in_next;
+        in_file.readf(&u_in_next, 1);
+        for(int oversample = 0; oversample < 16; ++oversample)
+        {
+        u_in += oversample / 16.0f * (u_in_next - u_in);
         for(int iteration = 0; ; ++iteration)
         {
             // get the Jacobi's matrix
@@ -352,13 +358,15 @@ int main()
         u_cp(3) = u_c3;
         u_cp(4) = u_c4;
 
-        cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << endl;
-
-        if(sample == 2500)
-            break;
+        if(oversample == 0)
+            cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << ',' << u_4 << ',' << u_a4 - x_bias_4(2) + 4.68565f << endl;
 
         //if(sample % 3000 == 0)
         //    cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
         //out_file.write(&u_out, 1);
+        
+        }
+        if(sample == 8000)
+            break;
     }
 }
