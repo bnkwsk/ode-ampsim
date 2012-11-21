@@ -51,8 +51,8 @@ const double f_s = 44100;
 const double t_s = 1.0 / f_s;
 const int buffer_seconds = 1;
 const int buffer_size = int(f_s) * buffer_seconds;
-const int process_seconds = 5;
-const char* in_file_name = "in16.wav"; 
+const int process_seconds = 1;
+const char* in_file_name = "blues_in.wav"; 
 const char* out_file_name = "out.wav"; 
 
 // ------------------------------------------------------------------------------------------------
@@ -109,9 +109,9 @@ double f(int i, VectorType &x, double u_in, VectorType &u_cp)
 	   u_k4 = x(14),
            u_a4 = x(15),
            u_c1 = u_k1,
-           u_c2 = (u_2 - u_a1),
-           u_c3 = (u_3 - u_a2),
-           u_c4 = (u_4 - u_a3),
+           u_c2 = u_a1 - u_2,
+           u_c3 = u_a2 - u_3,
+           u_c4 = u_a3 - u_4,
            u_c1p = u_cp(1),
            u_c2p = u_cp(2),
            u_c3p = u_cp(3),
@@ -132,7 +132,7 @@ double f(int i, VectorType &x, double u_in, VectorType &u_cp)
     if(i == 3)
         return (u_n - u_a1) * g_a1 - (u_2 - u_g2) * g_2 - i_a1;
     if(i == 4)
-        return u_c2p - u_c2 - (u_2 - u_g2) * g_2 / (c_2 * f_s);
+        return u_c2p - u_c2 + (u_2 - u_g2) * g_2 / (c_2 * f_s);
     if(i == 5)
         return (u_2 - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
     if(i == 6)
@@ -140,7 +140,7 @@ double f(int i, VectorType &x, double u_in, VectorType &u_cp)
     if(i == 7)
         return (u_n - u_a2) * g_a2 - (u_3 - u_g3) * g_3 - i_a2;
     if(i == 8)
-        return u_c3p - u_c3 - (u_3 - u_g3) * g_3 / (c_3 * f_s);
+        return u_c3p - u_c3 + (u_3 - u_g3) * g_3 / (c_3 * f_s);
     if(i == 9)
         return (u_3 - u_g3) * g_3 - u_g3 * g_g3 - i_g3;
     if(i == 10)
@@ -148,13 +148,49 @@ double f(int i, VectorType &x, double u_in, VectorType &u_cp)
     if(i == 11)
         return (u_n - u_a3) * g_a3 - (u_4 - u_g4) * g_4 - i_a3;
     if(i == 12)
-        return u_c4p - u_c4 - (u_4 - u_g4) * g_4 / (c_4 * f_s);
+        return u_c4p - u_c4 + (u_4 - u_g4) * g_4 / (c_4 * f_s);
     if(i == 13)
         return (u_4 - u_g4) * g_4 - u_g4 * g_g4 - i_g4;
     if(i == 14)
         return u_k4 * g_k4 - i_g4 - i_a4;
     if(i == 15)
         return (u_n - u_a4) * g_a4 - u_a4 * g_l - i_a4;
+}
+
+double f_bias(int triode, int i, VectorType &x)
+{
+    double u_k1 = x(1),
+           u_a1 = x(2),
+           i_g1 = i_g(0 - u_k1),
+           i_a1 = i_a(u_a1 - u_k1, 0 - u_k1),
+           g_k,
+           g_a;
+
+    if(triode == 1)
+    {
+        g_k = g_k1;
+        g_a = g_a1;
+    }
+    if(triode == 2)
+    {
+        g_k = g_k2;
+        g_a = g_a2;
+    }
+    if(triode == 3)
+    {
+        g_k = g_k3;
+        g_a = g_a3;
+    }
+    if(triode == 4)
+    {
+        g_k = g_k4;
+        g_a = g_a4;
+    }
+
+    if(i == 1)
+        return u_k1 * g_k - i_a1 - i_g1;
+    if(i == 2)
+        return (u_n - u_a1) * g_a - i_a1;
 }
 // ------------------------------------------------------------------------------------------------
 // - THE END OF CIRCUIT MODEL                                                                                -
@@ -168,6 +204,13 @@ double df(int equation, int x_i, VectorType &x, double u_in, VectorType &u_cp)
     x_h(x_i) += h;
     return double((long double)(f(equation, x_h, u_in, u_cp) - f(equation, x, u_in, u_cp)) / h);
 }
+double df_bias(int triode, int equation, int x_i, VectorType &x)
+{
+    long double h = 0.0000001f;
+    VectorType x_h = x;
+    x_h(x_i) += h;
+    return double((long double)(f_bias(triode, equation, x_h) - f_bias(triode, equation, x)) / h);
+}
 
 // calculates a Jacobian matrix
 void J(VectorType &x, double u_in, VectorType u_cp, MatrixType &j)
@@ -178,13 +221,54 @@ void J(VectorType &x, double u_in, VectorType u_cp, MatrixType &j)
             j(row, column) = df(row, column, x, u_in, u_cp);
         }
 }
+void J_bias(int triode, VectorType &x, MatrixType &j)
+{
+    for(int row = 1; row <= 2; ++row)
+        for(int column = 1; column <= 2; ++column)
+        {
+            j(row, column) = df_bias(triode, row, column, x);
+        }
+}
 
-bool is_last_iteration(VectorType x1, VectorType x2, double epsilon = 0.00001f)
+bool is_last_iteration(VectorType x1, VectorType x2, double epsilon = 0.0000001f)
 {
     for(int i = 1; i <= x1.length(); ++i)
         if(abs(x1(i)- x2(i)) > epsilon)
             return false;
     return true;
+}
+
+VectorType get_bias(int triode)
+{
+    DenseVector<Array<int> > piv(2);
+    VectorType F_bias(2);
+    VectorType x_bias(2);
+    VectorType x_prev_bias(2);
+    MatrixType Jacobi_bias(2, 2);
+
+    x_bias = 2, 300;
+
+    for(int iteration = 0; ; ++iteration)
+    {
+        // get the Jacobi's matrix
+        J_bias(triode, x_bias, Jacobi_bias);
+
+        // inverse the Jacobi's matrix using LU decomposition
+        lapack::trf(Jacobi_bias, piv);
+        lapack::tri(Jacobi_bias, piv);
+
+        // get the F vector
+        for(int equation = 1; equation <= 2; ++equation)
+        F_bias(equation) = f_bias(triode, equation, x_bias);
+
+        x_prev_bias = x_bias;
+        blas::mv(NoTrans, -1.0f, Jacobi_bias, F_bias, 1.0f, x_bias);
+
+        if(is_last_iteration(x_prev_bias, x_bias))
+	    break;
+    }
+
+    return x_bias;
 }
 
 int main()
@@ -193,6 +277,7 @@ int main()
     VectorType F(equation_count);
     MatrixType Jacobi(equation_count, equation_count);
     VectorType x(equation_count);
+    VectorType x_0(equation_count);
     VectorType u_cp(4);
     VectorType x_prev(equation_count);
 
@@ -202,22 +287,25 @@ int main()
     if(!in_file || !out_file)
         return -1;
 
-    x = 0.0f, 2.5f, 390.0f, 0.0f,
-        0.0f, 7.0f, 380.0f, 0.0f,
-        0.0f, 7.0f, 380.0f, 0.0f,
-        0.0f, 7.0f, 380.0f;
+    VectorType x_bias_1 = get_bias(1),
+               x_bias_2 = get_bias(2),
+               x_bias_3 = get_bias(3),
+               x_bias_4 = get_bias(4);
+
+    x_0 = 0.0f, x_bias_1(1), x_bias_1(2), 0.0f,
+          0.0f, x_bias_2(1), x_bias_2(2), 0.0f,
+          0.0f, x_bias_3(1), x_bias_3(2), 0.0f,
+          0.0f, x_bias_4(1), x_bias_4(2);
+
+    u_cp = x_bias_1(1), x_bias_1(2), x_bias_2(2), x_bias_3(2);
+
     float u_in;
-    u_cp = 2.5f, -360.0f, -360.0f, -360.0f;
     float u_out;
 
-    for(int sample = 0; sample < f_s * 2; ++sample)
-    {
-        in_file.readf(&u_in, 1);
-    }
     for(int sample = 0; sample < f_s * process_seconds; ++sample)
     {
         in_file.readf(&u_in, 1);
-
+        x = x_0;
         for(int iteration = 0; ; ++iteration)
         {
             // get the Jacobi's matrix
@@ -255,27 +343,20 @@ int main()
                u_g4 = x(13),
                u_k4 = x(14),
                u_a4 = x(15),
-               u_c1 = u_k1,
-               u_c2 = (u_2 - u_a1),
-               u_c3 = (u_3 - u_a2),
-               u_c4 = (u_4 - u_a3),
-               u_c1p = u_cp(1),
-               u_c2p = u_cp(2),
-               u_c3p = u_cp(3),
-               u_c4p = u_cp(4),
-               i_g1 = i_g(u_g1 - u_k1),
-               i_a1 = i_a(u_a1 - u_k1, u_g1 - u_k1);
+               u_c2 = u_a1 - u_2,
+               u_c3 = u_a2 - u_3,
+               u_c4 = u_a3 - u_4;
 
         u_cp(1) = u_k1;
         u_cp(2) = u_c2;
         u_cp(3) = u_c3;
         u_cp(4) = u_c4;
 
-        cout << sample << ',' << 10 * u_in << ',' << x(3) - 290 << ',' << x(4) << ',' << x(7) << endl;
+        cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << endl;
 
-
-        if(sample == 3300)
+        if(sample == 2500)
             break;
+
         //if(sample % 3000 == 0)
         //    cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
         //out_file.write(&u_out, 1);
