@@ -47,12 +47,12 @@ const int equation_count = 15;
 // simulation parameters
 const int format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 const int channels = 1;
-const double f_s = 44100;
+const double f_s = 2000000;
 const double t_s = 1.0 / f_s;
 const int buffer_seconds = 1;
 const int buffer_size = int(f_s) * buffer_seconds;
-const int process_seconds = 1;
-const char* in_file_name = "blues_in.wav"; 
+const int process_seconds = 10;
+const char* in_file_name = "blues_in_2m.wav";
 const char* out_file_name = "out.wav"; 
 
 // ------------------------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ void J_bias(int triode, VectorType &x, MatrixType &j)
         }
 }
 
-bool is_last_iteration(VectorType x1, VectorType x2, double epsilon = 0.0000001f)
+bool is_last_iteration(VectorType x1, VectorType x2, double epsilon = 0.00001f)
 {
     for(int i = 1; i <= x1.length(); ++i)
         if(abs(x1(i)- x2(i)) > epsilon)
@@ -300,18 +300,13 @@ int main()
     u_cp = x_bias_1(1), x_bias_1(2), x_bias_2(2), x_bias_3(2);
 
     float u_in;
-    float u_in_next;
     float u_out;
 
     x = x_0;
-    in_file.readf(&u_in_next, 1);
+
     for(int sample = 0; sample < f_s * process_seconds; ++sample)
     {
-        u_in = u_in_next;
-        in_file.readf(&u_in_next, 1);
-        for(int oversample = 0; oversample < 16; ++oversample)
-        {
-        u_in += oversample / 16.0f * (u_in_next - u_in);
+        in_file.readf(&u_in, 1);
         for(int iteration = 0; ; ++iteration)
         {
             // get the Jacobi's matrix
@@ -332,10 +327,11 @@ int main()
                 break;
         }
 
-        u_out = x(3);
+        u_out = x(15) - x_bias_4(2) + 4.68565f;
+        u_out /= 200.0f;
 
         double u_g1 = x(1),
-    	       u_k1 = x(2),
+               u_k1 = x(2),
                u_a1 = x(3),
                u_2 = x(4),
                u_g2 = x(5),
@@ -358,15 +354,10 @@ int main()
         u_cp(3) = u_c3;
         u_cp(4) = u_c4;
 
-        if(oversample == 0)
-            cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << ',' << u_4 << ',' << u_a4 - x_bias_4(2) + 4.68565f << endl;
+        //cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << ',' << u_4 << ',' << u_a4 - x_bias_4(2) + 4.68565f << endl;
 
-        //if(sample % 3000 == 0)
-        //    cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
-        //out_file.write(&u_out, 1);
-        
-        }
-        if(sample == 8000)
-            break;
+        if(sample % 3000 == 0)
+            cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
+        out_file.write(&u_out, 1);
     }
 }
