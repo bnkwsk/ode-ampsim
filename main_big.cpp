@@ -28,22 +28,32 @@ const double r_2 = 470000; const double g_2 = 1.0f / r_2;
 const double r_g2 = 1000000; const double g_g2 = 1.0f / r_g2;
 const double r_k2 = 1800; const double g_k2 = 1.0f / r_k2;
 const double r_a2 = 100000; const double g_a2 = 1.0f / r_a2;
+const double r_3 = 470000; const double g_3 = 1.0f / r_3;
+const double r_g3 = 470000; const double g_g3 = 1.0f / r_g3;
+const double r_k3 = 1800; const double g_k3 = 1.0f / r_k3;
+const double r_a3 = 100000; const double g_a3 = 1.0f / r_a3;
+const double r_4 = 470000; const double g_4 = 1.0f / r_4;
+const double r_g4 = 470000; const double g_g4 = 1.0f / r_g4;
+const double r_k4 = 1800; const double g_k4 = 1.0f / r_k4;
+const double r_a4 = 100000; const double g_a4 = 1.0f / r_a4;
 const double r_l = 4000000; const double g_l = 1.0f / r_l;
 const double c_1 = 0.000001f;
 const double c_2 = 0.000000022f;
+const double c_3 = 0.000000022f;
+const double c_4 = 0.000000022f;
 const double u_n = 400;
-const int equation_count = 7;
+const int equation_count = 15;
 
 // simulation parameters
 const int format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 const int channels = 1;
-const double f_s = 44100;
+const double f_s = 2000000;
 const double t_s = 1.0 / f_s;
 const int buffer_seconds = 1;
 const int buffer_size = int(f_s) * buffer_seconds;
 const int process_seconds = 10;
-const char* in_file_name = "blues_in.wav";
-const char* out_file_name = "out.wav";
+const char* in_file_name = "blues_in_2m.wav";
+const char* out_file_name = "out.wav"; 
 
 // ------------------------------------------------------------------------------------------------
 // - TRIODE MODEL                                                                                 -
@@ -61,11 +71,17 @@ double i_g(double u_gk)
     return 0;
 }
 
+// a coefficient used in the Norman Koren's triode model
+double E_1(double u_ak, double u_gk)
+{
+    return u_ak / K_p * log(1.0f + exp(K_p * (1.0f / mi + u_gk / sqrt(K_vb + pow(u_ak, 2)))));
+}
+
 // triode plate current
 double i_a(double u_ak, double u_gk)
 {
-    double E_1 =  u_ak / K_p * log(1.0f + exp(K_p * (1.0f / mi + u_gk / sqrt(K_vb + pow(u_ak, 2)))));
-    return pow(E_1, E_x) / K_g1 * (1.0f + sgn(E_1));
+    double E_1_val = E_1(u_ak, u_gk);
+    return pow(E_1_val, E_x) / K_g1 * (1.0f + sgn(E_1_val));
 }
 // ------------------------------------------------------------------------------------------------
 // - THE END OF TRIODE MODEL                                                                      -
@@ -78,20 +94,36 @@ double i_a(double u_ak, double u_gk)
 double f(int i, VectorType &x, double u_in, VectorType &u_cp)
 {
     double u_g1 = x(1),
-           u_k1 = x(2),
+	   u_k1 = x(2),
            u_a1 = x(3),
            u_2 = x(4),
            u_g2 = x(5),
-           u_k2 = x(6),
+	   u_k2 = x(6),
            u_a2 = x(7),
+           u_3 = x(8),
+           u_g3 = x(9),
+	   u_k3 = x(10),
+           u_a3 = x(11),
+           u_4 = x(12),
+           u_g4 = x(13),
+	   u_k4 = x(14),
+           u_a4 = x(15),
            u_c1 = u_k1,
            u_c2 = u_a1 - u_2,
+           u_c3 = u_a2 - u_3,
+           u_c4 = u_a3 - u_4,
            u_c1p = u_cp(1),
            u_c2p = u_cp(2),
+           u_c3p = u_cp(3),
+           u_c4p = u_cp(4),
            i_g1 = i_g(u_g1 - u_k1),
            i_a1 = i_a(u_a1 - u_k1, u_g1 - u_k1),
            i_g2 = i_g(u_g2 - u_k2),
-           i_a2 = i_a(u_a2 - u_k2, u_g2 - u_k2);
+           i_a2 = i_a(u_a2 - u_k2, u_g2 - u_k2),
+           i_g3 = i_g(u_g3 - u_k3),
+           i_a3 = i_a(u_a3 - u_k3, u_g3 - u_k3),
+           i_g4 = i_g(u_g4 - u_k4),
+           i_a4 = i_a(u_a4 - u_k4, u_g4 - u_k4);
 
     if(i == 1)
         return (u_in - u_g1) * g_1 - u_g1 * g_g1 - i_g1;
@@ -106,7 +138,23 @@ double f(int i, VectorType &x, double u_in, VectorType &u_cp)
     if(i == 6)
         return u_k2 * g_k2 - i_g2 - i_a2;
     if(i == 7)
-        return (u_n - u_a2) * g_a2 - u_a2 * g_l - i_a2;
+        return (u_n - u_a2) * g_a2 - (u_3 - u_g3) * g_3 - i_a2;
+    if(i == 8)
+        return u_c3p - u_c3 + (u_3 - u_g3) * g_3 / (c_3 * f_s);
+    if(i == 9)
+        return (u_3 - u_g3) * g_3 - u_g3 * g_g3 - i_g3;
+    if(i == 10)
+        return u_k3 * g_k3 - i_g3 - i_a3;
+    if(i == 11)
+        return (u_n - u_a3) * g_a3 - (u_4 - u_g4) * g_4 - i_a3;
+    if(i == 12)
+        return u_c4p - u_c4 + (u_4 - u_g4) * g_4 / (c_4 * f_s);
+    if(i == 13)
+        return (u_4 - u_g4) * g_4 - u_g4 * g_g4 - i_g4;
+    if(i == 14)
+        return u_k4 * g_k4 - i_g4 - i_a4;
+    if(i == 15)
+        return (u_n - u_a4) * g_a4 - u_a4 * g_l - i_a4;
 }
 
 double f_bias(int triode, int i, VectorType &x)
@@ -127,6 +175,16 @@ double f_bias(int triode, int i, VectorType &x)
     {
         g_k = g_k2;
         g_a = g_a2;
+    }
+    if(triode == 3)
+    {
+        g_k = g_k3;
+        g_a = g_a3;
+    }
+    if(triode == 4)
+    {
+        g_k = g_k4;
+        g_a = g_a4;
     }
 
     if(i == 1)
@@ -207,7 +265,7 @@ VectorType get_bias(int triode)
         blas::mv(NoTrans, -1.0f, Jacobi_bias, F_bias, 1.0f, x_bias);
 
         if(is_last_iteration(x_prev_bias, x_bias))
-            break;
+	    break;
     }
 
     return x_bias;
@@ -220,7 +278,7 @@ int main()
     MatrixType Jacobi(equation_count, equation_count);
     VectorType x(equation_count);
     VectorType x_0(equation_count);
-    VectorType u_cp(2);
+    VectorType u_cp(4);
     VectorType x_prev(equation_count);
 
     SndfileHandle in_file(in_file_name, SFM_READ, format, channels, int(f_s));
@@ -230,12 +288,16 @@ int main()
         return -1;
 
     VectorType x_bias_1 = get_bias(1),
-               x_bias_2 = get_bias(2);
+               x_bias_2 = get_bias(2),
+               x_bias_3 = get_bias(3),
+               x_bias_4 = get_bias(4);
 
     x_0 = 0.0f, x_bias_1(1), x_bias_1(2), 0.0f,
-          0.0f, x_bias_2(1), x_bias_2(2);
+          0.0f, x_bias_2(1), x_bias_2(2), 0.0f,
+          0.0f, x_bias_3(1), x_bias_3(2), 0.0f,
+          0.0f, x_bias_4(1), x_bias_4(2);
 
-    u_cp = x_bias_1(1), x_bias_1(2);
+    u_cp = x_bias_1(1), x_bias_1(2), x_bias_2(2), x_bias_3(2);
 
     float u_in;
     float u_out;
@@ -265,18 +327,34 @@ int main()
                 break;
         }
 
-        u_out = x(4) / 25.0f;
+        u_out = x(15) - x_bias_4(2) + 4.68565f;
+        u_out /= 200.0f;
 
-        double u_k1 = x(2),
+        double u_g1 = x(1),
+               u_k1 = x(2),
                u_a1 = x(3),
                u_2 = x(4),
-               u_c1 = u_k1,
-               u_c2 = u_a1 - u_2;
+               u_g2 = x(5),
+               u_k2 = x(6),
+               u_a2 = x(7),
+               u_3 = x(8),
+               u_g3 = x(9),
+               u_k3 = x(10),
+               u_a3 = x(11),
+               u_4 = x(12),
+               u_g4 = x(13),
+               u_k4 = x(14),
+               u_a4 = x(15),
+               u_c2 = u_a1 - u_2,
+               u_c3 = u_a2 - u_3,
+               u_c4 = u_a3 - u_4;
 
         u_cp(1) = u_k1;
         u_cp(2) = u_c2;
+        u_cp(3) = u_c3;
+        u_cp(4) = u_c4;
 
-        //cout << sample << ',' << 10 * u_in << ',' << u_out << endl;
+        //cout << sample << ',' << 10 * u_in << ',' << u_2 << ',' << u_3 << ',' << u_4 << ',' << u_a4 - x_bias_4(2) + 4.68565f << endl;
 
         if(sample % 3000 == 0)
             cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
