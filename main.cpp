@@ -41,7 +41,7 @@ const double f_s = 44100;
 const double t_s = 1.0 / f_s;
 const int buffer_seconds = 1;
 const int buffer_size = int(f_s) * buffer_seconds;
-const int process_seconds = 10;
+const int process_seconds = 30;
 const char* in_file_name = "blues_in.wav";
 const char* out_file_name = "out.wav";
 
