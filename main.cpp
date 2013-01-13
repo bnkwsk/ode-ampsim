@@ -121,6 +121,24 @@ void J_bias(int triode, VectorType &x, MatrixType &j)
         }
 }
 
+class Block;
+
+class NoConvergenceException
+{
+    Block &block;
+
+public:
+    NoConvergenceException(Block &b) : block(b)
+    {
+        //
+    }
+
+    Block &getBlock()
+    {
+        return block;
+    }
+};
+
 class Block
 {
 protected:
@@ -152,6 +170,7 @@ protected:
         }
     }
 
+public:
     void resetState()
     {
         VectorType x_bias_1 = get_bias(1),
@@ -161,7 +180,6 @@ protected:
         u_cp = x_bias_1(1), x_bias_1(2);
     }
 
-public:
     Block(float out_div=1.0, int e_q=0) : out_divider(out_div), iterated(0), equation_count(e_q)
     {
         piv = DenseVector<Array<int> >(equation_count);
@@ -175,7 +193,19 @@ public:
         resetState();
     }
 
-    virtual VectorType f(VectorType &x, double u_in, VectorType &u_cp) = 0;
+    void setUCp(VectorType u)
+    {
+        u_cp = u;
+        x(2) = u(1);
+        x(3) = u(2);
+    }
+
+    VectorType getState()
+    {
+        return x;
+    }
+
+    virtual VectorType f(VectorType &x, double u_in, VectorType &u_cp) {}
 
     double process(float u_in)
     {
@@ -196,6 +226,13 @@ public:
             if(is_last_iteration(x_prev, x))
                 break;
         }
+
+        for(int i = 1; i <= equation_count; ++i)
+            if(x(i) != x(i))
+            {
+                throw NoConvergenceException(*this);
+            }
+
 
         double u_k1 = x(2),
                u_a1 = x(3),
@@ -344,7 +381,10 @@ int main(int argc, char **argv)
     float u_out;
 
     FirstBlock block1 = FirstBlock();
-    SecondBlock block2 = SecondBlock(125.0f);
+    SecondBlock block2 = SecondBlock();
+    SecondBlock block3 = SecondBlock(200.0);
+    
+    Block *blocks[] = {&block1, &block2, &block3};
 
     in_file.seek(start_seconds * f_s, SEEK_SET);
 
@@ -352,15 +392,31 @@ int main(int argc, char **argv)
     {
         in_file.readf(&u_in, 1);
 
-        u_processed = block1.process(u_in);
-        u_out = block2.process(u_processed);
+        try
+        {
+            u_processed = u_in;
+            for(Block *block: blocks)
+                u_processed = block->process(u_processed);
+            u_out = u_processed;
+        }
+        catch(NoConvergenceException e)
+        {
+            e.getBlock().resetState();
+            --sample;
+            continue;
+        }
 
         if(sample % 10000 == 0)
-          cout << sample << ',' << 10 * u_in << ',' << 125.0f * u_out << endl;
+          cout << sample << ',' << 10 * u_in << ',' << u_out << endl;
 
         if(sample % 10000 == 0)
             cout << 100.0f * (1.0f * sample) / (1.0f * f_s * process_seconds) << "%..." << endl;
 
+        if(u_out > 1.0)
+        {
+            cout << "[WARNING] Sound clipping" << endl;
+            u_out = 1.0;
+        }
         out_file.write(&u_out, 1);
     }
 
