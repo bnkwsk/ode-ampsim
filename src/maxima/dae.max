@@ -1,0 +1,23 @@
+e1 : (u_in - u_g1) * g_1 - u_g1 * g_g1 - i_g1;
+e2 : u_k1 * g_k1 + c_1 * du_k1 / dt - i_a1 - i_g1;
+e3 : (u_n - u_a1) * g_a1 - (u_2 - u_g2) * g_2 - i_a1;
+e4 : (u_g2 - u_2) * g_2 + c_2 * du_c2 / dt;
+e5 : (u_2 - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
+e6 : u_k2 * g_k2 - i_g2 - i_a2;
+e7 : (u_n - u_a2) * g_a2 - u_a2 * g_l - i_a2;
+
+e2 : ratsubst(c_1 * 2 * (u_k1 - u_c1p) * f_s - i_c1p, c_1 * du_k1 / dt, e2);
+e4 : ratsubst(c_2 * 2 * (u_c2 - u_c2p) * f_s - i_c2p, c_2 * du_c2 / dt, e4);
+
+/* UNCOMMENT FOR BDF
+e2 : ratsubst(c_1 * (u_k1 - u_c1p) * f_s, c_1 * du_k1 / dt, e2);
+e4 : ratsubst(c_2 * (u_c2 - u_c2p) * f_s, c_2 * du_c2 / dt, e4);
+*/
+
+display2d : false;
+
+with_stdout("src/cpp/generated/FirstBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7));
+
+e2 : u_k1 * g_k1 - i_a1 - i_g1;
+
+with_stdout("src/cpp/generated/SecondBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7));
