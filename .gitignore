@@ -1,3 +1,7 @@
 *.wav
 inz
 bin/simulator
+bin/build
+intermediate
+impulses/
+test_wav/

@@ -1,11 +1,9 @@
 #ifndef LOCKINGQUEUE_HPP
 #define LOCKINGQUEUE_HPP
 
-#include <iostream>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <chrono>
 
 template<typename T>
 class LockingQueue
@@ -15,9 +13,9 @@ class LockingQueue
         std::mutex mutex;
         std::condition_variable notEmptyCondition;
         std::condition_variable notFullCondition;
-        const int maxSize = 10;
+        const int maxSize = 100;
     public:
-        void push(const T& data)
+        void push(const T &data)
         {
             std::unique_lock<std::mutex> lock(mutex);
             notFullCondition.wait(lock, [this] {return queue.size() != maxSize;});

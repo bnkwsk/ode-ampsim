@@ -29,6 +29,14 @@ class OutputCollector
         while(!last) {
             out = processor.getOutput();
             u_out = out.getValue();
+            if(u_out > 1.0f || u_out < -1.0f)
+            {
+                std::cout << "clip: " << u_out << std::endl;
+                if(u_out > 0.0f)
+                    u_out = 1.0f;
+                else
+                    u_out = -1.0f;
+            }
             last = out.isLast();
             out_file.write(&u_out, 1);
             ++collected;

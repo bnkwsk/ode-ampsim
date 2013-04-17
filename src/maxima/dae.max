@@ -1,23 +1,49 @@
-e1 : (u_in - u_g1) * g_1 - u_g1 * g_g1 - i_g1;
-e2 : u_k1 * g_k1 + c_1 * du_k1 / dt - i_a1 - i_g1;
-e3 : (u_n - u_a1) * g_a1 - (u_2 - u_g2) * g_2 - i_a1;
-e4 : (u_g2 - u_2) * g_2 + c_2 * du_c2 / dt;
-e5 : (u_2 - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
-e6 : u_k2 * g_k2 - i_g2 - i_a2;
-e7 : (u_n - u_a2) * g_a2 - u_a2 * g_l - i_a2;
-
-e2 : ratsubst(c_1 * 2 * (u_k1 - u_c1p) * f_s - i_c1p, c_1 * du_k1 / dt, e2);
-e4 : ratsubst(c_2 * 2 * (u_c2 - u_c2p) * f_s - i_c2p, c_2 * du_c2 / dt, e4);
-
-/* UNCOMMENT FOR BDF
-e2 : ratsubst(c_1 * (u_k1 - u_c1p) * f_s, c_1 * du_k1 / dt, e2);
-e4 : ratsubst(c_2 * (u_c2 - u_c2p) * f_s, c_2 * du_c2 / dt, e4);
-*/
-
 display2d : false;
 
-with_stdout("src/cpp/generated/FirstBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7));
+/* first */
+e1 : (u_in - u_g1) * g_1 - u_g1 * g_g1 - i_g1;
+e2 : i_g1 + i_a1 - u_k1 * g_k1 - c_1 * du_k1 / dt;
+e3 : (u_n - u_a1) * g_a1 - i_a1 - (u_2 - u_g2) * g_2;
+e4 : c_2 * du_c2 / dt - (u_2 - u_g2) * g_2;
+e5 : (u_2 - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
+e6 : i_g2 + i_a2 - u_k2 * g_k2;
+e7 : (u_n - u_a2) * g_a2 - i_a2 - u_3 / (r_3 + r_g3);
+e8 : c_3 * du_c3 / dt - u_3 / (r_3 + r_g3);
 
-e2 : u_k1 * g_k1 - i_a1 - i_g1;
+e2 : ratsubst(2 * (u_k1 - u_c1p) * fS - i_c1p, du_k1 / dt, e2);
+e4 : ratsubst(2 * (u_c2 - u_c2p) * fS - i_c2p, du_c2 / dt, e4);
+e8 : ratsubst(2 * (u_c3 - u_c3p) * fS - i_c3p, du_c3 / dt, e8);
 
-with_stdout("src/cpp/generated/SecondBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7));
+with_stdout("src/cpp/generated/FirstBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7, ",", e8));
+
+/* second */
+e1 : (u_in - u_g2) * g_2 - u_g2 * g_g2 - i_g2;
+e2 : i_g2 + i_a2 - u_k2 * g_k2;
+e3 : (u_n - u_a2) * g_a2 - i_a2 - (u_3 - u_g3) * g_3;
+e4 : c_3 * du_c3 / dt - (u_3 - u_g3) * g_3;
+e5 : (u_3 - u_g3) * g_3 - u_g3 * g_g3 - i_g3;
+e6 : i_g3 + i_a3 - u_k3 * g_k3;
+e7 : (u_n - u_a3) * g_a3 - i_a3 - u_4 / (r_4 + r_g4);
+e8 : c_4 * du_c4 / dt - u_4 / (r_4 + r_g4);
+
+e2 : ratsubst(2 * (u_k2 - u_c2p) * fS - i_c2p, du_k2 / dt, e2);
+e4 : ratsubst(2 * (u_c3 - u_c3p) * fS - i_c3p, du_c3 / dt, e4);
+e8 : ratsubst(2 * (u_c4 - u_c4p) * fS - i_c4p, du_c4 / dt, e8);
+
+with_stdout("src/cpp/generated/SecondBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7, ",", e8));
+
+/* third */
+e1 : (u_in - u_g3) * g_3 - u_g3 * g_g3 - i_g3;
+e2 : i_g3 + i_a3 - u_k3 * g_k3;
+e3 : (u_n - u_a3) * g_a3 - i_a3 - (u_4 - u_g4) * g_4;
+e4 : c_4 * du_c4 / dt - (u_4 - u_g4) * g_4;
+e5 : (u_4 - u_g4) * g_4 - u_g4 * g_g4 - i_g4;
+e6 : i_g4 + i_a4 - u_k4 * g_k4;
+e7 : (u_n - u_a4) * g_a4 - i_a4 - u_5 * g_l;
+e8 : c_5 * du_c5 / dt - u_5 * g_l;
+
+e2 : ratsubst(2 * (u_k3 - u_c3p) * fS - i_c3p, du_k3 / dt, e2);
+e4 : ratsubst(2 * (u_c4 - u_c4p) * fS - i_c4p, du_c4 / dt, e4);
+e8 : ratsubst(2 * (u_c5 - u_c5p) * fS - i_c5p, du_c5 / dt, e8);
+
+with_stdout("src/cpp/generated/ThirdBlock.cpp.part", print(e1, ",", e2, ",", e3, ",", e4, ",", e5, ",", e6, ",", e7, ",", e8));

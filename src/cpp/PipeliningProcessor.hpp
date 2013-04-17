@@ -16,7 +16,7 @@ protected:
     std::vector<ElementType *> elements;
     std::vector<LockingQueue<SampleType> *> queues;
     LockingQueue<SampleType> *input;
-    LockingQueue<SampleType> *output;    
+    LockingQueue<SampleType> *output;
 public:
     PipeliningProcessor()
     {

@@ -13,6 +13,7 @@ class ProcessorElement
         QueueType *input;
         QueueType *output;
         std::thread thread;
+
         virtual void run() {}
         
     public:

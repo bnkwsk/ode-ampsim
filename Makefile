@@ -5,8 +5,9 @@ program_GEN_CXX_DIR := $(program_SRC_CXX_DIR)/generated
 program_INT_DIR := intermediate
 program_BIN_DIR := bin
 program_C_SRCS := $(wildcard $(program_SRC_C_DIR)/*.c)
-program_GEN_CXX_SRCS := $(program_GEN_CXX_DIR)/FirstBlock.cpp.part $(program_GEN_CXX_DIR)/SecondBlock.cpp.part
+program_GEN_CXX_SRCS := $(program_GEN_CXX_DIR)/FirstBlock.cpp.part $(program_GEN_CXX_DIR)/SecondBlock.cpp.part $(program_GEN_CXX_DIR)/ThirdBlock.cpp.part
 program_CXX_SRCS := $(wildcard $(program_SRC_CXX_DIR)/*.cpp)
+program_HXX_SRCS := $(wildcard $(program_SRC_CXX_DIR)/*.hpp)
 program_C_OBJS := $(program_C_SRCS:$(program_SRC_C_DIR)/%.c=$(program_INT_DIR)/%.o)
 program_CXX_OBJS := $(program_CXX_SRCS:$(program_SRC_CXX_DIR)/%.cpp=$(program_INT_DIR)/%.o)
 program_OBJS := $(program_C_OBJS) $(program_CXX_OBJS)
@@ -31,12 +32,13 @@ $(program_GEN_CXX_SRCS):
 	mkdir -p $(program_GEN_CXX_DIR)
 	maxima < src/maxima/dae.max > /dev/null
 
-$(program_OBJS): $(program_INT_DIR)/%.o : $(program_SRC_CXX_DIR)/%.cpp $(program_GEN_CXX_SRCS)
+$(program_OBJS): $(program_INT_DIR)/%.o : $(program_SRC_CXX_DIR)/%.cpp $(program_GEN_CXX_SRCS) $(program_HXX_SRCS)
 	mkdir -p $(program_INT_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	@- $(RM) $(program_NAME)
 	@- $(RM) $(program_OBJS)
+	@- $(RM) -r $(program_GEN_CXX_DIR)
 
 distclean: clean
