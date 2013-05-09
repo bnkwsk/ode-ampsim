@@ -13,7 +13,7 @@ class LockingQueue
         std::mutex mutex;
         std::condition_variable notEmptyCondition;
         std::condition_variable notFullCondition;
-        const int maxSize = 100;
+        const int maxSize = 20;
     public:
         void push(const T &data)
         {

@@ -24,22 +24,39 @@ class SimulationRunner
         output->join();
         amp->join();
         input->join();
+        delete input;
+        delete output;
+        delete amp;
         running = false;
     }
 
     public:
+        SimulationRunner() : running(false)
+        {
+            //
+        }
+
         void run(const char *inputPath, const char *impulseResponsePath, const char *_outputPath)
         {
             outputPath = _outputPath;
             input = new InputProvider<GuitarAmp>(inputPath);
             amp = new GuitarAmp(input->getFS(), impulseResponsePath);
             output = new OutputCollector<GuitarAmp>(*amp);
+            if(thread.joinable())
+                thread.join();
             thread = std::thread(&SimulationRunner::_run, this);
         }
 
         void join()
         {
-            thread.join();
+            //if(running) TODO: odkomentować dla GUI
+                thread.join();
+        }
+
+        void interrupt()
+        {
+            if(running)
+                input->interrupt();
         }
 
         double getProgress()

@@ -16,6 +16,8 @@ class GUI
     std::string impulseResponseFilePath;
     std::string outputFilePath;
 
+    sigc::connection progressTimer;
+
     SimulationRunner &runner;
 
     void outputFileChooserDialogOKButtonClicked()
@@ -76,7 +78,22 @@ class GUI
             return;
         }
         runner.run(inputFilePath.c_str(), impulseResponseFilePath.c_str(), outputFilePath.c_str());
-        Glib::signal_timeout().connect(sigc::mem_fun(this, &GUI::updateProgressBar), 500);
+        progressTimer = Glib::signal_timeout().connect(sigc::mem_fun(this, &GUI::updateProgressBar), 500);
+    }
+
+    void stopSimulationRequested()
+    {
+        runner.interrupt();
+        if (!progressTimer.empty())
+            progressTimer.disconnect();
+        runner.join();
+        updateProgressBar();
+    }
+
+    void quitCallback()
+    {
+        stopSimulationRequested();
+        app->quit();
     }
 
     public:
@@ -88,7 +105,9 @@ class GUI
             Gtk::Button* closeButton;
             builder->get_widget("closeButton", closeButton);
             closeButton->signal_clicked().connect(
-                sigc::ptr_fun(Gtk::Main::quit));
+                sigc::mem_fun(this, &GUI::stopSimulationRequested));
+            mainWindow->signal_hide().connect(
+                sigc::mem_fun(this, &GUI::quitCallback));
 
             builder->get_widget("inputFile", inputFileChooserButton);
             inputFileChooserButton->signal_selection_changed().connect(

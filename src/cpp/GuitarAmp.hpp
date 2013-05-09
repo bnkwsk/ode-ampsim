@@ -16,18 +16,6 @@ const double K_vb = 300.0;
 const double g_cf = 0.00001;
 const double g_co = -0.2;
 
-// sign function    
-template <typename T> 
-inline int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
-double _i_a(double u_ak, double u_gk)
-{
-    double E_1 = u_ak / K_p * log(1.0 + exp(K_p * (1.0 / mi + u_gk / sqrt(K_vb + u_ak * u_ak))));
-    return pow(E_1, E_x) / K_g1 * (1.0 + sgn(E_1));
-}
-
 class GuitarPreampBase
 {
 protected:
@@ -90,6 +78,17 @@ public:
     }
 };
 
+// sign function    
+template <typename T> 
+inline int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+// anode current function
+double _i_a(double u_ak, double u_gk)
+{
+    double E_1 = u_ak / K_p * log(1.0 + exp(K_p * (1.0 / mi + u_gk / sqrt(K_vb + u_ak * u_ak))));
+    return pow(E_1, E_x) / K_g1 * (1.0 + sgn(E_1));
+}
 BilinearInterpolator GuitarPreampBase::i_a = BilinearInterpolator(_i_a, -2000.0, 2000.0, -200.0, 200.0, 5.0, 0.05);
 
 class GuitarPreampFirstBlockCircuit : public GuitarPreampBase
@@ -101,7 +100,7 @@ public:
         iCP = 0.0, 0.0, 0.0;
     }
 
-    inline VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS)
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
     {
         double u_g1 = x(1),
             u_k1 = x(2),
@@ -143,8 +142,8 @@ public:
                u_c3 = u_a2 - u_3;
 
         iCP = c_1 * 2 * (u_k1 - uCP(1)) * fS - iCP(1),
-               c_2 * 2 * (u_c2 - uCP(2)) * fS - iCP(2),
-               c_3 * 2 * (u_c3 - uCP(3)) * fS - iCP(3);
+              c_2 * 2 * (u_c2 - uCP(2)) * fS - iCP(2),
+              c_3 * 2 * (u_c3 - uCP(3)) * fS - iCP(3);
 
         uCP = u_k1,
               u_c2,
@@ -171,7 +170,7 @@ public:
         iCP = 0.0, 0.0;
     }
 
-    inline VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS)
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
     {
         double u_g2 = x(1),
             u_k2 = x(2),
@@ -235,7 +234,7 @@ public:
         iCP = 0.0, 0.0;
     }
 
-    inline VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS)
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
     {
         double u_g3 = x(1),
             u_k3 = x(2),

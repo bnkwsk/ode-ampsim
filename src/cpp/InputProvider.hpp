@@ -1,4 +1,5 @@
 #include <thread>
+#include <atomic>
 
 #include <sndfile.hh>
 #include <sndfile.h>
@@ -11,6 +12,7 @@ class InputProvider
     std::thread thread;
     P *processor;
     SndfileHandle in_file;
+    bool interrupted;
 
     void run()
     {
@@ -20,15 +22,20 @@ class InputProvider
         int length = getFrames();
 
         float u_in;
+        bool last = false;
         in_file.seek(0, SEEK_SET);
         for(int sample = 0; sample < length; ++sample)
         {
             in_file.readf(&u_in, 1);
-            processor->setInput(Sample(u_in, sample == length - 1));
+            last = interrupted || (sample == length - 1);
+            processor->setInput(Sample(u_in, last));
+            if(last)
+                break;
         }
+        in_file = SndfileHandle();
     }
 public:
-    InputProvider(const char *inputPath)
+    InputProvider(const char *inputPath) : interrupted(false)
     {
         in_file = SndfileHandle(inputPath);
     }
@@ -48,5 +55,10 @@ public:
     void join()
     {
         thread.join();
+    }
+
+    void interrupt()
+    {
+        interrupted = true;
     }
 };

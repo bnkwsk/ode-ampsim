@@ -11,8 +11,8 @@
 
 int main(int argc, char **argv)
 {
-    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
-        argc, argv, "org.bnkwsk.simulator");
+    //Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
+    //    argc, argv, "org.bnkwsk.simulator");
 
     const char *complexPointwiseMultiplyAddCode = 
 "__kernel void ComplexPointwiseMultiplyAdd(__global const float* a, __global const float* b, __global float *c, unsigned int parts)"
