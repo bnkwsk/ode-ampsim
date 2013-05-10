@@ -150,7 +150,7 @@ public:
               u_c3;
     }
 
-    inline double get_output(VectorType &x)
+    inline double getOutput(VectorType &x)
     {
         return x(4) / outDivider;
     }
@@ -214,7 +214,7 @@ public:
         uCP = u_c3, u_c4;
     }
 
-    inline double get_output(VectorType &x)
+    inline double getOutput(VectorType &x)
     {
         return x(4) / outDivider;
     }
@@ -278,7 +278,7 @@ public:
         uCP = u_c4, u_c5;
     }
 
-    inline double get_output(VectorType &x)
+    inline double getOutput(VectorType &x)
     {
         return x(8) / outDivider;
     }

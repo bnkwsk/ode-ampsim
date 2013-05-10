@@ -1,5 +1,8 @@
 #include <cmath>
 
+#define auxFloor(x) ((double)(long)(x))
+#define auxCeil(x) ((double)(long)((x)+1))
+
 // z = f(x, y); x - linear, y - linear
 class BilinearInterpolator
 {
@@ -42,12 +45,14 @@ class BilinearInterpolator
         {
             if(x < minX || x > maxX || y < minY || y > maxY || x != x || y != y)
                 return function(x, y);
-            int xLo = floor((x - minX) / stepX);
-            int xHi = ceil((x - minX) / stepX);
-            int yLo = floor((y - minY) / stepY);
-            int yHi = ceil((y - minY) / stepY);
-            ScalarType tX = (x - minX) / stepX - xLo;
-            ScalarType tY = (y - minY) / stepY -  yLo;
+            double x_v = (x - minX) / stepX;
+            int xLo = auxFloor(x_v);
+            int xHi = auxCeil(x_v);
+            double y_v = (y - minY) / stepY;
+            int yLo = auxFloor(y_v);
+            int yHi = auxCeil(y_v);
+            ScalarType tX = x_v - xLo;
+            ScalarType tY = y_v - yLo;
 
             return data[xLo][yLo] * (1.0 - tX) * (1.0 - tY) +
                    data[xHi][yLo] * tX * (1.0 - tY) +

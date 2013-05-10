@@ -12,6 +12,10 @@ typedef flens::GeMatrix<flens::FullStorage<double>> MatrixType;
 typedef flens::DenseVector<flens::Array<double>> VectorType;
 typedef flens::DenseVector<flens::Array<int>> IntegerVectorType;
 
+// typedef flens::GeMatrix<flens::FullStorage<double, flens::ColMajor, flens::IndexOptions<>, boost::fast_pool_allocator<double>>> MatrixType;
+// typedef flens::DenseVector<flens::Array<double, flens::IndexOptions<>, boost::fast_pool_allocator<double>>> VectorType;
+// typedef flens::DenseVector<flens::Array<int, flens::IndexOptions<>, boost::fast_pool_allocator<int>>> IntegerVectorType;
+
 template<typename Circuit>
 class CircuitBlock;
 
@@ -84,7 +88,7 @@ protected:
     }
 
     //virtual VectorType f(VectorType &x, double uIn, VectorType &uCP, VectorType &iCP) {};
-    //virtual double get_output(VectorType &x) {};
+    //virtual double getOutput(VectorType &x) {};
     //virtual inline void updateState() {};
 
     VectorType f_bias(VectorType &x) {
@@ -112,7 +116,7 @@ protected:
         //xPredict = 2.0 * xPrev - xPrevPrev;
         //x = xPredict;
 
-        for(int iteration = 0; ; ++iteration)
+        for(;;)
         {
             // save the previous state vector
             xPrev = x;
@@ -139,7 +143,7 @@ protected:
 
         circuit.updateState(x, uCP, iCP, fS);
         
-        return circuit.get_output(x);
+        return circuit.getOutput(x);
     }
 
     VectorType getBias(VectorType xBiasStart)
@@ -199,9 +203,9 @@ public:
         double u_in_inter; // as the left hand side of the interpolation
         double u_out;
         double originalFS = fS;
-        int maxScalingFactor = 512;
+        double maxScalingFactor = 512;
 
-        int scalingFactor; // splitted quantity
+        double scalingFactor; // splitted quantity
         while(!last)
         {
             in = input->pop();
@@ -218,15 +222,15 @@ public:
             }
             catch(NoConvergenceException e1)
             {
-                for(scalingFactor = 2; scalingFactor <= maxScalingFactor; scalingFactor *= 2)
+                for(scalingFactor = 2.0; scalingFactor <= maxScalingFactor; scalingFactor *= 2.0)
                 {
-                    fS = (double)scalingFactor * originalFS;
+                    fS = scalingFactor * originalFS;
                     try {
                         x = xBackup;
                         xPrev = xBackup;
-                        for(int i = 1; i <= scalingFactor; ++i)
+                        for(double i = 1; i <= scalingFactor; i += 1.0)
                         {
-                            u_in_inter = i / (double)scalingFactor * uIn + (1.0 - i / (double) scalingFactor) * u_in_prev;
+                            u_in_inter = i / scalingFactor * uIn + (1.0 - i / scalingFactor) * u_in_prev;
                             u_out = process(u_in_inter);
                         }
                         output->push(Sample(u_out, last));
@@ -236,7 +240,7 @@ public:
                     {
                         // if the upsampling wasn't successfull return the previous value
                         if(scalingFactor == maxScalingFactor)
-                            output->push(Sample(circuit.get_output(xBackup), last));
+                            output->push(Sample(circuit.getOutput(xBackup), last));
                     }
                 }
             }
