@@ -5,3 +5,5 @@ bin/build
 intermediate
 impulses/
 test_wav/
+in_wav/
+callgrind.*

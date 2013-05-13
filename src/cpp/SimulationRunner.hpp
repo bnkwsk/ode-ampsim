@@ -1,5 +1,4 @@
-#ifndef SIMULATIONRUNNER_HPP
-#define SIMULATIONRUNNER_HPP
+#pragma once
 
 #include "GuitarAmp.hpp"
 #include "InputProvider.hpp"
@@ -49,7 +48,7 @@ class SimulationRunner
 
         void join()
         {
-            //if(running) TODO: odkomentować dla GUI
+            //if(running)
                 thread.join();
         }
 
@@ -68,5 +67,3 @@ class SimulationRunner
             return running;
         }
 };
-
-#endif

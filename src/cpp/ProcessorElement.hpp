@@ -1,5 +1,4 @@
-#ifndef PROCESSORELEMENT_HPP
-#define PROCESSORELEMENT_HPP
+#pragma once
 
 #include<thread>
 
@@ -34,5 +33,3 @@ class ProcessorElement
             thread.join();
         }
 };
-
-#endif

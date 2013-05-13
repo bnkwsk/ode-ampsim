@@ -1,3 +1,5 @@
+#pragma once
+
 #include <gtkmm.h>
 
 #include "SimulationRunner.hpp"

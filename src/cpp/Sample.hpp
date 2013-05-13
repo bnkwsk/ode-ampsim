@@ -1,5 +1,4 @@
-#ifndef SAMPLE_HPP
-#define SAMPLE_HPP
+#pragma once
 
 class Sample
 {
@@ -22,5 +21,3 @@ class Sample
             return last;
         }
 };
-
-#endif

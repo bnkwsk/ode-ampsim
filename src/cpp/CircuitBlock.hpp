@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <thread>
 #include <vector>
@@ -11,10 +13,6 @@
 typedef flens::GeMatrix<flens::FullStorage<double>> MatrixType;
 typedef flens::DenseVector<flens::Array<double>> VectorType;
 typedef flens::DenseVector<flens::Array<int>> IntegerVectorType;
-
-// typedef flens::GeMatrix<flens::FullStorage<double, flens::ColMajor, flens::IndexOptions<>, boost::fast_pool_allocator<double>>> MatrixType;
-// typedef flens::DenseVector<flens::Array<double, flens::IndexOptions<>, boost::fast_pool_allocator<double>>> VectorType;
-// typedef flens::DenseVector<flens::Array<int, flens::IndexOptions<>, boost::fast_pool_allocator<int>>> IntegerVectorType;
 
 template<typename Circuit>
 class CircuitBlock;
@@ -87,10 +85,6 @@ protected:
         }
     }
 
-    //virtual VectorType f(VectorType &x, double uIn, VectorType &uCP, VectorType &iCP) {};
-    //virtual double getOutput(VectorType &x) {};
-    //virtual inline void updateState() {};
-
     VectorType f_bias(VectorType &x) {
         VectorType iCP(capacitorCount);
         VectorType uCP(capacitorCount);
@@ -116,7 +110,7 @@ protected:
         //xPredict = 2.0 * xPrev - xPrevPrev;
         //x = xPredict;
 
-        for(;;)
+        do
         {
             // save the previous state vector
             xPrev = x;
@@ -129,14 +123,9 @@ protected:
 
             // solve the linear system to get the new state vector value
             flens::lapack::sv(Jacobi, piv, x);
-
-            //if(id == 3)
-            //    std::cout << id << ": " << x << std::endl;
-
-            if(isLastIteration(xPrev, x))
-                break;
-        }
-        
+        } while(isLastIteration(xPrev, x));
+     
+        // test the convergence
         for(int i = 1; i <= equationCount; ++i)
             if(x(i) != x(i))
                 throw NoConvergenceException(*this);
@@ -227,7 +216,7 @@ public:
                     fS = scalingFactor * originalFS;
                     try {
                         x = xBackup;
-                        xPrev = xBackup;
+                        xPrev = xPrevBackup;
                         for(double i = 1; i <= scalingFactor; i += 1.0)
                         {
                             u_in_inter = i / scalingFactor * uIn + (1.0 - i / scalingFactor) * u_in_prev;
@@ -246,6 +235,4 @@ public:
             }
         }
     }
-
-
 };

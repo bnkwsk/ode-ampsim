@@ -1,5 +1,4 @@
-#ifndef PIPELININGPROCESSOR_H
-#define PIPELININGPROCESSOR_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -69,5 +68,3 @@ public:
         return output->pop();
     }
 };
-
-#endif

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 
 #include "Sample.hpp"
@@ -100,7 +102,7 @@ public:
         iCP = 0.0, 0.0, 0.0;
     }
 
-    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) //__attribute__((always_inline))
     {
         double u_g1 = x(1),
             u_k1 = x(2),
@@ -170,7 +172,7 @@ public:
         iCP = 0.0, 0.0;
     }
 
-    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) //__attribute__((always_inline))
     {
         double u_g2 = x(1),
             u_k2 = x(2),
@@ -234,7 +236,7 @@ public:
         iCP = 0.0, 0.0;
     }
 
-    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) __attribute__((always_inline))
+    VectorType f(VectorType &x, double u_in, VectorType &uCP, VectorType &iCP, double fS) //__attribute__((always_inline))
     {
         double u_g3 = x(1),
             u_k3 = x(2),
