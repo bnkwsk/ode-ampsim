@@ -48,7 +48,7 @@ class SimulationRunner
 
         void join()
         {
-            //if(running)
+            //  if(running)
                 thread.join();
         }
 

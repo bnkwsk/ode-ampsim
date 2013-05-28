@@ -123,7 +123,7 @@ protected:
 
             // solve the linear system to get the new state vector value
             flens::lapack::sv(Jacobi, piv, x);
-        } while(isLastIteration(xPrev, x));
+        } while(!isLastIteration(xPrev, x));
      
         // test the convergence
         for(int i = 1; i <= equationCount; ++i)
@@ -146,17 +146,15 @@ protected:
         fS = 0.0;
         x_bias = xBiasStart;
 
-        for(int iteration = 0; ; ++iteration)
+        do
         {
             x_prev_bias = x_bias;
 
             J_bias(x_bias, Jacobi_bias);
             x_bias = Jacobi_bias * x_prev_bias - f_bias(x_prev_bias);
             flens::lapack::sv(Jacobi_bias, piv, x_bias);
-
-            if(isLastIteration(x_prev_bias, x_bias))
-                break;
-        }
+        } while(!isLastIteration(x_prev_bias, x_bias));
+        
         fS = _fS;
         return x_bias;
     }

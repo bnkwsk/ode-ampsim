@@ -1,0 +1,43 @@
+===================================
+It All Starts With a General Matrix
+===================================
+
+In this session we introduce matrix types
+ - __SyMatrix__ and
+ - __TrMatrix__.
+
+Like the __GeMatrix__ type these matrix types use a *full storage* scheme for
+storing their elements.  Often you start we a __GeMatrix__ and then create
+*triangular views* or *symmetric views*.  Such an task often arises in the
+implementation of numerical algorithms. For example, in __FLENS-LAPACK__ this
+is a often used feature of FLENS.
+
+
+Example Code
+============
+We setup some general matrix and then create triangular and symmetric matric
+views that reference the upper or lower part.
+
+:import: flens/examples/tut03-page01-example.cc [stripped, downloadable]
+
+Comments on Example Code
+========================
+:import: flens/examples/tut03-page01-example.cc [brief]
+
+Compile and Run
+===============
+
+ *--[SHELL]-------------------------------------------------------------------*
+ |                                                                            |
+ |  cd flens/examples                                                         |
+ |  g++ -Wall -std=c++11 -I../.. tut03-page01-example.cc                      |
+ |  ./a.out                                                                   |
+ |                                                                            |
+ *----------------------------------------------------------------------------*
+
+:links: __GeMatrix__      -> file:flens/matrixtypes/general/impl/gematrix.h
+        __SyMatrix__      -> file:flens/matrixtypes/symmetric/impl/symatrix.h
+        __TrMatrix__      -> file:flens/matrixtypes/triangular/impl/trmatrix.h
+        __FLENS-LAPACK__  -> doc:flens/lapack/lapack
+
+:navigate: __up__    -> doc:flens/examples/tutorial

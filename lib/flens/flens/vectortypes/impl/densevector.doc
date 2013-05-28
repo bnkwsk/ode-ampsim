@@ -1,0 +1,886 @@
+===========
+DenseVector                                                           [TOC:2]
+===========
+
+Dense vectors have their elements stored linearly in memory separated
+from each other by a constant stride.
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename A>                                                    |
+|  class DenseVector;                                                       |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVectortemplatetypenameAclas]
+                         [sDenseVector;                                     ]
+
+The template parameter specifies the underlying array storage scheme:
+
+- __Array__ is a storage scheme that allocates its own memory.  The stride
+  between elements will always be one.
+- __ArrayView__ is a storage scheme that does not allocate its own memory.
+  Instead it only references elements from other storage schemes (e.g.
+  matrix rows/columns or vector parts).
+- __ConstArrayView__ has the same purpose and functionality like __ArrayView__
+  for read-only access.
+
+Also the type of elements, index bases and methods for memory allocation are
+defined through the array storage schemes.
+
+
+:links:  Array          -> doc:flens/storage/array/array
+         ArrayView      -> doc:flens/storage/array/arrayview
+         ConstArrayView -> doc:flens/storage/array/constarrayview
+
+
+Constructors and Destructor
+===========================
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector();                                                           |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                            [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A>#]
+
+    Creates an empty vector, i.e. a vector with length zero.
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  explicit                                                                 |
+|  DenseVector(IndexType length);                                           |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A># #e]
+                         [xplicit                                           ]
+
+    Creates a vector with `length` elements.  By default indices will start
+    with `1`.  However, this depends on the underlying storage scheme.
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector(IndexType length, IndexType firstIndex);                     |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A># #S]
+                         [0_#                                               ]
+
+    Creates a vector with `length` elements.  By default indices will start
+    with `firstIndex`.  Note that this will overwrite any other policy defined
+    through the underlying storage scheme.
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector(const Range<IndexType> &range);                              |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A>#&1>]
+                         [@N@flens@CT>1#T@Range1 #                          ]
+
+    Creates a vector where number of elements and index range is specified
+    by `range`.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector(const Engine &engine, bool reverse=false);                   |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A>#&1t]
+                         [0.0#b#                                            ]
+
+    Defined in namespace `flens`.
+    Constructor of class `DenseVector` with 1 template parameter(s).
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector(const DenseVector &rhs);                                     |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@DenseVector<A>#&1 ]
+                         [#                                                 ]
+
+    Defined in namespace `flens`.
+    Constructor of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector(const DenseVector<RHS> &rhs);                            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#TDenseVector<A]
+                         [>#&1>@N@flens@CT>1#T@DenseVector1t1.0#templatetype]
+                         [nameRHS                                           ]
+
+    Defined in namespace `flens`.
+    Constructor of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector(DenseVector<RHS> &rhs);                                  |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#TDenseVector<A]
+                         [>#&>@N@flens@CT>1#T@DenseVector1t1.0#templatetypen]
+                         [ameRHS                                            ]
+
+    Defined in namespace `flens`.
+    Constructor of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector(const Vector<RHS> &rhs);                                 |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#TDenseVector<A]
+                         [>#&1>@N@flens@CT>1#T@Vector1t1.0#templatetypenameR]
+                         [HS                                                ]
+
+    Defined in namespace `flens`.
+    Constructor of class `DenseVector` with 1 template parameter(s).
+
+
+Operators
+=========
+
+Assignment and Arithmetic Operators
+-----------------------------------
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  Initializer                                                              |
+|  operator=(const ElementType &value);                                     |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator=#&1 #Init]
+                         [ializeroperator=                                  ]
+
+    Defined in namespace `flens`.
+    Operator `=` of class `DenseVector` with 1 template parameters.
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector &                                                            |
+|  operator=(const DenseVector &rhs);                                       |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator=#&1 #Dens]
+                         [eVectorbandoperator=                              ]
+
+
+    Defined in namespace `flens`.
+    Operator `=` of class `DenseVector` with 1 template parameters.
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector &                                                        |
+|      operator=(const Vector<RHS> &rhs);                                   |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#Toperator=#&1>]
+                         [@N@flens@CT>1#T@Vector1t1.0#templatetypenameRHSDen]
+                         [seVectorbandoperator=                             ]
+
+    Defined in namespace `flens`.
+    Operator `=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector &                                                        |
+|      operator+=(const Vector<RHS> &rhs);                                  |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#Toperator+=#&1]
+                         [>@N@flens@CT>1#T@Vector1t1.0#templatetypenameRHSDe]
+                         [nseVectorbandoperator+=                           ]
+
+    Defined in namespace `flens`.
+    Operator `+=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      DenseVector &                                                        |
+|      operator-=(const Vector<RHS> &rhs);                                  |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#Toperator-=#&1]
+                         [>@N@flens@CT>1#T@Vector1t1.0#templatetypenameRHSDe]
+                         [nseVectorbandoperator-=                           ]
+
+    Defined in namespace `flens`.
+    Operator `-=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector &                                                            |
+|  operator+=(const ElementType &rhs);                                      |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator+=#&1 #Den]
+                         [seVectorbandoperator+=                            ]
+
+
+    Defined in namespace `flens`.
+    Operator `+=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector &                                                            |
+|  operator-=(const ElementType &rhs);                                      |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator-=#&1 #Den]
+                         [seVectorbandoperator-=                            ]
+
+    Defined in namespace `flens`.
+    Operator `-=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector &                                                            |
+|  operator*=(const ElementType &alpha);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator*=#&1 #Den]
+                         [seVectorbandoperator*=                            ]
+
+    Defined in namespace `flens`.
+    Operator `*=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  DenseVector &                                                            |
+|  operator/=(const ElementType &alpha);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator/=#&1 #Den]
+                         [seVectorbandoperator/=                            ]
+
+    Defined in namespace `flens`.
+    Operator `/=` of class `DenseVector` with 1 template parameter(s).
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ElementType &                                                      |
+|  operator()(IndexType index) const;                                       |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()# #1cons]
+                         [tElementTypeband                                  ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  ElementType &                                                            |
+|  operator()(IndexType index);                                             |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()# #Eleme]
+                         [ntTypeband                                        ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+Element-Wise Operations
+-----------------------
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename S>                                                    |
+|      const densevector::ConstElementClosure<DenseVector,                  |
+|                                             typename Scalar<S>::Impl>     |
+|      operator()(const Scalar<S> &index) const;                            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#Toperator()#&1]
+                         [>@N@flens@CT>1#T@Scalar1t1.0#1templatetypenameScon]
+                         [stdensevectorConstElementClosureDenseVector,typena]
+                         [meScalarSImpl                                     ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ConstElementClosure                                                |
+|  operator()(const IndexVariable &index) const;                            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@IndexVariable1 #1constConstElementClos]
+                         [ure                                               ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  ElementClosure                                                           |
+|  operator()(IndexVariable &index);                                        |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&>@N@fl]
+                         [ens@CT>1#T@IndexVariable1 #ElementClosure         ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+Creating Vector Views
+---------------------
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ConstView                                                          |
+|  operator()(const Range<IndexType> &range) const;                         |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Range1 #1constConstView               ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  View                                                                     |
+|  operator()(const Range<IndexType> &range);                               |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Range1 #View                          ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ConstView                                                          |
+|  operator()(const Range<IndexType> &range,                                |
+|             IndexType firstViewIndex) const;                              |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Range1 #S2_#1constConstView           ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  View                                                                     |
+|  operator()(const Range<IndexType> &range,                                |
+|             IndexType firstViewIndex);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Range1 #S2_#View                      ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ConstView                                                          |
+|  operator()(const Underscore<IndexType> &all,                             |
+|             IndexType firstViewIndex) const;                              |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Underscore1 #S2_#1constConstView      ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  View                                                                     |
+|  operator()(const Underscore<IndexType> &all,                             |
+|             IndexType firstViewIndex);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@operator()#&1>@N@f]
+                         [lens@CT>1#T@Underscore1 #S2_#View                 ]
+
+    Defined in namespace `flens`.
+    Operator `()` of class `DenseVector` with 1 template parameters.
+
+
+
+Methods
+=======
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ConstView                                                          |
+|  reverse() const;                                                         |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@reverse#1constCons]
+                         [tView                                             ]
+
+    Defined in namespace `flens`.
+    Method `reverse` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  View                                                                     |
+|  reverse();                                                               |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                               [c:@N@flens@CT>1#T@DenseVector@F@reverse#View]
+
+    Defined in namespace `flens`.
+    Method `reverse` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  Range<IndexType>                                                         |
+|  range() const;                                                           |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@range#1RangeIndexT]
+                         [ype                                               ]
+
+    Defined in namespace `flens`.
+    Method `range` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  firstIndex() const;                                                      |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@firstIndex#1IndexT]
+                         [ype                                               ]
+
+    Defined in namespace `flens`.
+    Method `firstIndex` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  lastIndex() const;                                                       |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@lastIndex#1IndexTy]
+                         [pe                                                ]
+
+    Defined in namespace `flens`.
+    Method `lastIndex` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  length() const;                                                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                          [c:@N@flens@CT>1#T@DenseVector@F@length#1IndexType]
+
+    Defined in namespace `flens`.
+    Method `length` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  inc() const;                                                             |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                             [c:@N@flens@CT>1#T@DenseVector@F@inc#1IndexType]
+
+    Defined in namespace `flens`.
+    Method `inc` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  endIndex() const;                                                        |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@endIndex#1IndexTyp]
+                         [e                                                 ]
+
+    Defined in namespace `flens`.
+    Method `endIndex` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const ElementType *                                                      |
+|  data() const;                                                            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@data#1constElement]
+                         [Type*                                             ]
+
+    Defined in namespace `flens`.
+    Method `data` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  ElementType *                                                            |
+|  data();                                                                  |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                          [c:@N@flens@CT>1#T@DenseVector@F@data#ElementType*]
+
+    Defined in namespace `flens`.
+    Method `data` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  stride() const;                                                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                          [c:@N@flens@CT>1#T@DenseVector@F@stride#1IndexType]
+
+    Defined in namespace `flens`.
+    Method `stride` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  IndexType                                                                |
+|  indexBase() const;                                                       |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@indexBase#1IndexTy]
+                         [pe                                                ]
+
+    Defined in namespace `flens`.
+    Method `indexBase` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename RHS>                                                  |
+|      bool                                                                 |
+|      resize(const DenseVector<RHS> &rhs,                                  |
+|             const ElementType &value = ElementType());                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@FT@>1#Tresize#&1>@N@]
+                         [flens@CT>1#T@DenseVector1t1.0#&1 #templatetypename]
+                         [RHSbool                                           ]
+
+    Defined in namespace `flens`.
+    Method `resize` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  bool                                                                     |
+|  resize(IndexType length,                                                 |
+|         IndexType firstIndex = Engine::defaultIndexBase,                  |
+|         const ElementType &value = ElementType());                        |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@resize# #S0_#&1 #b]
+                         [ool                                               ]
+
+    Defined in namespace `flens`.
+    Method `resize` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  bool                                                                     |
+|  fill(const ElementType &value = ElementType(0));                         |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                              [c:@N@flens@CT>1#T@DenseVector@F@fill#&1 #bool]
+
+    Defined in namespace `flens`.
+    Method `fill` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  void                                                                     |
+|  changeIndexBase(IndexType firstIndex);                                   |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@changeIndexBase# #]
+                         [void                                              ]
+
+    Defined in namespace `flens`.
+    Method `changeIndexBase` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  const A &                                                                |
+|  engine() const;                                                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@CT>1#T@DenseVector@F@engine#1constAband]
+
+    Defined in namespace `flens`.
+    Method `engine` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  A &                                                                      |
+|  engine();                                                                |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                               [c:@N@flens@CT>1#T@DenseVector@F@engine#Aband]
+
+    Defined in namespace `flens`.
+    Method `engine` of class `DenseVector` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  bool                                                                     |
+|  reversed() const;                                                        |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                             [c:@N@flens@CT>1#T@DenseVector@F@reversed#1bool]
+
+    Defined in namespace `flens`.
+    Method `reversed` of class `DenseVector` with 1 template parameters.
+
+
+
+Related Trait-Classes
+=====================
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  struct _DenseVectorChecker;                                              |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@S@_DenseVectorCheckerstruct_DenseVector]
+                         [Checker;                                          ]
+
+    Defined in namespace `flens`.
+    Class _DenseVectorCheckerstruct_DenseVectorChecker;.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  struct Two;                                                              |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                           [c:@N@flens@S@_DenseVectorChecker@S@TwostructTwo;]
+
+    Defined in namespace `flens`.
+    Class _DenseVectorChecker.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename T>                                                    |
+|  struct IsDenseVector;                                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@ST>1#T@IsDenseVectortemplatetypenameTst]
+                         [ructIsDenseVector;                                ]
+
+    Defined in namespace `flens`.
+    Class IsDenseVectortemplatetypenameTstructIsDenseVector; with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename T>                                                    |
+|  struct IsIntegerDenseVector;                                             |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@ST>1#T@IsIntegerDenseVectortemplatetype]
+                         [nameTstructIsIntegerDenseVector;                  ]
+
+    Defined in namespace `flens`.
+    Class IsIntegerDenseVectortemplatetypenameTstructIsIntegerDenseVector; with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename T>                                                    |
+|  struct IsRealDenseVector;                                                |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@ST>1#T@IsRealDenseVectortemplatetypenam]
+                         [eTstructIsRealDenseVector;                        ]
+
+    Defined in namespace `flens`.
+    Class IsRealDenseVectortemplatetypenameTstructIsRealDenseVector; with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename T>                                                    |
+|  struct IsComplexDenseVector;                                             |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@ST>1#T@IsComplexDenseVectortemplatetype]
+                         [nameTstructIsComplexDenseVector;                  ]
+
+    Defined in namespace `flens`.
+    Class IsComplexDenseVectortemplatetypenameTstructIsComplexDenseVector; with 1 template parameters.
+
+
+
+
+################################################################################
+#
+#  The following CODEREFs are automatically created stubs.
+#
+################################################################################
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename VZ>                                                   |
+|      typename ImagVector<DenseVector<VZ> >::ConstView                     |
+|      imag(const DenseVector<VZ> &z);                                      |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@FT@>1#Timag#&1>@N@flens@CT>1#T@DenseVec]
+                         [tor1t0.0#templatetypenameVZtypenameImagVectorDense]
+                         [VectorVZConstView                                 ]
+
+    Defined in namespace `flens`.
+    Function `imag` with 1 template parameters.
+
+
+
+*--[CODEREF]--------------------------------------------------------------------*
+|                                                                               |
+|  template <typename VZ>                                                       |
+|      typename RestrictTo<IsDenseVector<VZ>::value,                            |
+|               typename ImagVector<typename RemoveRef<VZ>::Type>::View>::Type  |
+|      imag(VZ &&z);                                                            |
+|                                                                               |
+*-------------------------------------------------------------------------------*
+                           [c:@N@flens@FT@>1#Timag#&t0.0#templatetypenameVZtypen]
+                           [ameRestrictToIsDenseVectorVZvalue,typenameImagVector]
+                           [typenameRemoveRefVZTypeViewType                     ]
+
+    Defined in namespace `flens`.
+    Function `imag` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename VZ>                                                   |
+|      typename RealVector<DenseVector<VZ> >::ConstView                     |
+|      real(const DenseVector<VZ> &z);                                      |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@FT@>1#Treal#&1>@N@flens@CT>1#T@DenseVec]
+                         [tor1t0.0#templatetypenameVZtypenameRealVectorDense]
+                         [VectorVZConstView                                 ]
+
+    Defined in namespace `flens`.
+    Function `real` with 1 template parameters.
+
+
+
+*--[CODEREF]--------------------------------------------------------------------*
+|                                                                               |
+|  template <typename VZ>                                                       |
+|      typename RestrictTo<IsDenseVector<VZ>::value,                            |
+|               typename RealVector<typename RemoveRef<VZ>::Type>::View>::Type  |
+|      real(VZ &&z);                                                            |
+|                                                                               |
+*-------------------------------------------------------------------------------*
+                           [c:@N@flens@FT@>1#Treal#&t0.0#templatetypenameVZtypen]
+                           [ameRestrictToIsDenseVectorVZvalue,typenameRealVector]
+                           [typenameRemoveRefVZTypeViewType                     ]
+
+    Defined in namespace `flens`.
+    Function `real` with 1 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename VX>                                                   |
+|      typename RestrictTo<IsDenseVector<VX>::value,                        |
+|               bool>::Type                                                 |
+|      fillRandom(VX &&x);                                                  |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@FT@>1#TfillRandom#&t0.0#templatetypenam]
+                         [eVXtypenameRestrictToIsDenseVectorVXvalue,boolType]
+
+    Defined in namespace `flens`.
+    Function `fillRandom` with 1 template parameters.
+
+
+

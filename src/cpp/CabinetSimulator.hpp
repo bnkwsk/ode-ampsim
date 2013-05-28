@@ -24,7 +24,7 @@ protected:
     typedef viennacl::vector<ScalarType> GPUVector;
     typedef viennacl::scalar<ScalarType> GPUScalar;
 
-    const int blockSize = 1024; // it has to be a power of 2
+    const int blockSize = 1024 * 8; // it has to be a power of 2
     int filterPartQuantity;
 
     CPUVector cpuInput;
@@ -70,7 +70,7 @@ protected:
             }
             processBlock(ComplexPointwiseMultiplyAdd);
             for(int i = blockSize; i < 2 * blockSize; i += 2)
-                output->push(Sample(cpuOutput[i] / 20.0, last ? (i == 2 * blockSize - 2) : false));
+                output->push(Sample(cpuOutput[i] / 40.0, last ? (i == 2 * blockSize - 2) : false));
         }
     }
 

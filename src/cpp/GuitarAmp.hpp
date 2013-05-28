@@ -26,8 +26,8 @@ protected:
     const double r_g1 = 1e6; const double g_g1 = 1.0f / r_g1;
     const double r_k1 = 2700; const double g_k1 = 1.0f / r_k1;
     const double r_a1 = 100e3; const double g_a1 = 1.0f / r_a1;
-    const double r_2 = 470e3; const double g_2 = 1.0f / r_2; // 1e6
-    const double r_g2 = 1e6; const double g_g2 = 1.0f / r_g2; // 470e3
+    const double r_2 = 470e3; const double g_2 = 1.0f / r_2; // 1.46e6
+    const double r_g2 = 1e6; const double g_g2 = 1.0f / r_g2; // 10e3
     const double r_k2 = 1800; const double g_k2 = 1.0f / r_k2;
     const double r_a2 = 100e3; const double g_a2 = 1.0f / r_a2;
     const double r_3 = 470e3; const double g_3 = 1.0f / r_3;
@@ -295,6 +295,10 @@ typedef PipeliningProcessor<Sample, ProcessorElement> ProcessorType;
 
 class GuitarAmp : public ProcessorType
 {
+    typedef CircuitBlock<GuitarPreampFirstBlockCircuit> GuitarPreampFirstBlock;
+    typedef CircuitBlock<GuitarPreampSecondBlockCircuit> GuitarPreampSecondBlock;
+    typedef CircuitBlock<GuitarPreampThirdBlockCircuit> GuitarPreampThirdBlock;
+
     double fS;
     ProcessorElement *firstBlock;
     ProcessorElement *secondBlock;
@@ -304,9 +308,9 @@ class GuitarAmp : public ProcessorType
 public:
     GuitarAmp(double _fS, const char *impulseResponsePath) : PipeliningProcessor(), fS(_fS)
     {
-        firstBlock = new CircuitBlock<GuitarPreampFirstBlockCircuit>(fS);
-        secondBlock = new CircuitBlock<GuitarPreampSecondBlockCircuit>(fS);
-        thirdBlock = new CircuitBlock<GuitarPreampThirdBlockCircuit>(fS);
+        firstBlock = new GuitarPreampFirstBlock(fS);
+        secondBlock = new GuitarPreampSecondBlock(fS);
+        thirdBlock = new GuitarPreampThirdBlock(fS);
         cabinet = new CabinetSimulator(impulseResponsePath);
         elements.push_back(firstBlock);
         elements.push_back(secondBlock);

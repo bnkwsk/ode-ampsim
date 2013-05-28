@@ -1,1 +1,0 @@
-g_3*(u_in-u_g3)-g_g3*u_g3-i_g3 , -g_k3*u_k3+i_g3+i_a3 , g_a3*(u_n-u_a3)+g_4*(u_g4-u_4)-i_a3 , c_4*((2*u_c4-2*u_c4p)*fS-i_c4p)+g_4*u_g4-g_4*u_4 , -g_g4*u_g4+g_4*(u_4-u_g4)-i_g4 , -g_k4*u_k4+i_g4+i_a4 , g_a4*(u_n-u_a4)-g_l*u_5-i_a4 , c_5*((2*u_c5-2*u_c5p)*fS-i_c5p)-g_l*u_5 

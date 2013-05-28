@@ -11,16 +11,18 @@ program_HXX_SRCS := $(wildcard $(program_SRC_CXX_DIR)/*.hpp)
 program_C_OBJS := $(program_C_SRCS:$(program_SRC_C_DIR)/%.c=$(program_INT_DIR)/%.o)
 program_CXX_OBJS := $(program_CXX_SRCS:$(program_SRC_CXX_DIR)/%.cpp=$(program_INT_DIR)/%.o)
 program_OBJS := $(program_C_OBJS) $(program_CXX_OBJS)
-program_INCLUDE_DIRS := /home/prezes/lib/flens/ .
+program_INCLUDE_DIRS := lib/flens/ lib/ .
 program_LIBRARY_DIRS := 
 program_LIBRARIES :=
 
 CXX := g++-4.8
 
-CXXFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) -pipe -std=c++11 -O3 -pthread -lpthread `pkg-config gtkmm-3.0 --cflags` -DNDEBUG -flto
+CXXFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) -pipe -std=c++11 -O3 -pthread -lpthread `pkg-config gtkmm-3.0 --cflags` -DNDEBUG -flto -march=native -ggdb3
+#CXXFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) -pipe -std=c++11 -pthread -lpthread `pkg-config gtkmm-3.0 --cflags`
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
-LFLAGS += -lcln -lsndfile `pkg-config gtkmm-3.0 --libs` -lOpenCL -ltcmalloc -flto
+LFLAGS += -lsndfile `pkg-config gtkmm-3.0 --libs` -lOpenCL -ltcmalloc -flto
+#LFLAGS += -lcln -lsndfile `pkg-config gtkmm-3.0 --libs` -lOpenCL
 
 .PHONY: all clean distclean
 

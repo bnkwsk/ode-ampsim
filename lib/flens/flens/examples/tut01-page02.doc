@@ -1,0 +1,29 @@
+=======================
+Changing the Index Base                                                 [TOC]
+=======================
+FLENS provides different ways to change the index base of a matrix.  You can
+specify the index base when a matrix gets created.  Or you can define special
+matrix types with their own default base.
+
+Example Code
+============
+:import: flens/examples/tut01-page02-example.cc [stripped, downloadable]
+
+Comments on Example Code
+========================
+:import: flens/examples/tut01-page02-example.cc [brief]
+
+Compile and Run
+===============
+
+   *--[SHELL]-----------------------------------------------------------------*
+   |                                                                          |
+   |  cd flens/examples                                                       |
+   |  g++ -Wall -std=c++11 -I../.. tut01-page02-example.cc                    |
+   |  ./a.out                                                                 |
+   |                                                                          |
+   *--------------------------------------------------------------------------*
+
+:navigate: __up__    -> doc:flens/examples/tutorial
+           __back__  -> doc:flens/examples/tut01-page01
+           __next__  -> doc:flens/examples/tut01-page03

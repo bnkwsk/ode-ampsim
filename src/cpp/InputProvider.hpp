@@ -36,6 +36,7 @@ class InputProvider
         }
         in_file = SndfileHandle();
     }
+
 public:
     InputProvider(const char *inputPath) : interrupted(false)
     {

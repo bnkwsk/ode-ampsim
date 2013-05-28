@@ -1,0 +1,187 @@
+===============
+BLAS Level 2: r                                                        [TOC]
+===============
+*r* (defined in namespace `flens::blas`) computes rank-1 updates for general,
+symmetric and hermitian matrices.
+
+
+General Matrix
+==============
+
+*Note:* The following variant is identical with `flens::blas::ru` below.
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename VY, typename MA>         |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsDenseVector<VY>::value                         |
+|                       && IsGeMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      r(const ALPHA &alpha, const VX &x, const VY &y, MA &&A);             |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>4#T#T#T#Tr#&1t0.0#&1t0.1#&1t]
+                         [0.2#&t0.3#templatetypenameALPHA,typenameVX,typenam]
+                         [eVY,typenameMAtypenameRestrictToIsDenseVectorVXval]
+                         [ueandIsDenseVectorVYvalueandIsGeMatrixMAvalue,void]
+                         [Type                                              ]
+
+    alpha    `(input)`                                                         +
+             Scaling factor $\alpha$.
+    x        `(input) real or complex valued DenseVector`                      +
+             Vector $x$.
+    y        `(input) real or complex valued DenseVector`                      +
+             Vector $y$.
+    A        `(input/output) real or complex valued GeMatrix`                  +
+             On entry, the initial matrix $A$.                                 +
+             On exit, the updated Matrix $A \leftarrow \alpha x y^T$
+
+
+Unconjugated
+------------
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename VY, typename MA>         |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsDenseVector<VY>::value                         |
+|                       && IsGeMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      ru(const ALPHA &alpha, const VX &x, const VY &y, MA &&A);            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>4#T#T#T#Tru#&1t0.0#&1t0.1#&1]
+                         [t0.2#&t0.3#templatetypenameALPHA,typenameVX,typena]
+                         [meVY,typenameMAtypenameRestrictToIsDenseVectorVXva]
+                         [lueandIsDenseVectorVYvalueandIsGeMatrixMAvalue,voi]
+                         [dType                                             ]
+
+    alpha    `(input)`                                                         +
+             Scaling factor $\alpha$.
+    x        `(input) real or complex valued DenseVector`                      +
+             Vector $x$.
+    y        `(input) real or complex valued DenseVector`                      +
+             Vector $y$.
+    A        `(input/output) real or complex valued GeMatrix`                  +
+             On entry, the initial matrix $A$.                                 +
+             On exit, the updated Matrix $A \leftarrow \alpha x y^T$
+
+
+Conjugated
+----------
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename VY, typename MA>         |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsDenseVector<VY>::value                         |
+|                       && IsGeMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      rc(const ALPHA &alpha, const VX &x, const VY &y, MA &&A);            |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>4#T#T#T#Trc#&1t0.0#&1t0.1#&1]
+                         [t0.2#&t0.3#templatetypenameALPHA,typenameVX,typena]
+                         [meVY,typenameMAtypenameRestrictToIsDenseVectorVXva]
+                         [lueandIsDenseVectorVYvalueandIsGeMatrixMAvalue,voi]
+                         [dType                                             ]
+
+
+Symmetric Matrix
+================
+
+(Todo)
+
+
+Hermitian Matrix
+================
+
+(Todo)
+################################################################################
+#
+#  The following CODEREFs are automatically created stubs.
+#
+################################################################################
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename MA>                      |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsSyMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      r(const ALPHA &alpha, const VX &x, MA &&A);                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>3#T#T#Tr#&1t0.0#&1t0.1#&t0.2]
+                         [#templatetypenameALPHA,typenameVX,typenameMAtypena]
+                         [meRestrictToIsDenseVectorVXvalueandIsSyMatrixMAval]
+                         [ue,voidType                                       ]
+
+    Defined in namespace `flens::blas`.
+    Function `r` with 3 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename MA>                      |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsHeMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      r(const ALPHA &alpha, const VX &x, MA &&A);                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>3#T#T#Tr#&1t0.0#&1t0.1#&t0.2]
+                         [#templatetypenameALPHA,typenameVX,typenameMAtypena]
+                         [meRestrictToIsDenseVectorVXvalueandIsHeMatrixMAval]
+                         [ue,voidType                                       ]
+
+    Defined in namespace `flens::blas`.
+    Function `r` with 3 template parameters.
+
+
+
+################################################################################
+#
+#  The following CODEREFs are automatically created stubs.
+#
+################################################################################
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename MA>                      |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsHpMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      r(const ALPHA &alpha, const VX &x, MA &&A);                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>3#T#T#Tr#&1t0.0#&1t0.1#&t0.2]
+                         [#templatetypenameALPHA,typenameVX,typenameMAtypena]
+                         [meRestrictToIsDenseVectorVXvalueandIsHpMatrixMAval]
+                         [ue,voidType                                       ]
+
+    Defined in namespace `flens::blas`.
+    Function `r` with 3 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VX, typename MA>                      |
+|      typename RestrictTo<IsDenseVector<VX>::value                         |
+|                       && IsSpMatrix<MA>::value,                           |
+|               void>::Type                                                 |
+|      r(const ALPHA &alpha, const VX &x, MA &&A);                          |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>3#T#T#Tr#&1t0.0#&1t0.1#&t0.2]
+                         [#templatetypenameALPHA,typenameVX,typenameMAtypena]
+                         [meRestrictToIsDenseVectorVXvalueandIsSpMatrixMAval]
+                         [ue,voidType                                       ]
+
+    Defined in namespace `flens::blas`.
+    Function `r` with 3 template parameters.
+
+
+

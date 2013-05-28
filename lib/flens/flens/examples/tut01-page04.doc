@@ -1,0 +1,68 @@
+=============
+Dense Vectors                                                           [TOC]
+=============
+
+__Dense vectors__ have their elements stored linearly in memory separated from
+each other by a constant stride.  If you create a dense vector that allocates
+its own memory then its stride will equal one.  Strides different from one
+naturally arise when dealing with vector views.  Vector views can reference
+vector slices or rows/columns of matrices.
+
+:links: Dense vectors -> doc:flens/vectortypes/impl/densevector
+
+First Steps
+===========
+We start with the typical task: setting up a vector, initializing it,
+manipulating it and printing it.
+
+
+Example Code
+------------
+:import: flens/examples/tut01-page04-example01.cc [stripped, downloadable]
+
+Comments on Example Code
+------------------------
+:import: flens/examples/tut01-page04-example01.cc [brief]
+
+Compile and Run
+---------------
+
+ *--[SHELL]-------------------------------------------------------------------*
+ |                                                                            |
+ |  cd flens/examples                                                         |
+ |  g++ -Wall -std=c++11 -I../.. tut01-page04-example01.cc                    |
+ |  ./a.out                                                                   |
+ |                                                                            |
+ *----------------------------------------------------------------------------*
+
+Vectors Referencing Matrix Rows, Columns and Diagonals
+======================================================
+Referencing rows, columns or diagonals of a matrix is a common task in
+numerical algorithms.  So here we show how to do this for general matrices
+where the corresponding vector views are dense vectors.
+
+
+
+Example Code
+------------
+:import: flens/examples/tut01-page04-example02.cc [stripped, downloadable]
+
+Comments on Example Code
+------------------------
+:import: flens/examples/tut01-page04-example02.cc [brief]
+
+Compile and Run
+---------------
+
+ *--[SHELL]-------------------------------------------------------------------*
+ |                                                                            |
+ |  cd flens/examples                                                         |
+ |  g++ -Wall -std=c++11 -I../.. tut01-page04-example02.cc                    |
+ |  ./a.out                                                                   |
+ |                                                                            |
+ *----------------------------------------------------------------------------*
+
+
+:navigate: __up__    -> doc:flens/examples/tutorial
+           __back__  -> doc:flens/examples/tut01-page03
+           __next__  -> doc:flens/examples/tut01-page05

@@ -1,0 +1,264 @@
+==================
+BLAS Level 1: scal                                                    [TOC]
+==================
+
+*rscal* (defined in namespace `flens::blas`) computes $y \leftarrow \alpha y$
+for a vector $y$.
+
+We also provide a variant that does the computation for matrices instead of
+vectors.
+
+Vector Variant
+==============
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VY>                                   |
+|      typename RestrictTo<IsDenseVector<VY>::value,                        |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, VY &&y);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameVYtypenameRestrictToIsDen]
+                         [seVectorVYvalue,voidType                          ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+    alpha    `(input) real scalar`                                             +
+             Scaling factor for the values in $y$.
+    y        `(input/output) real or complex valued DenseVector`               +
+             On entry the original vector $y$.                                 +
+             On exit overwritten with $\alpha\,y$.
+
+
+Matrix Variant (Level 1 Extension)
+==================================
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsGeMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsGeM]
+                         [atrixMBvalue,voidType                             ]
+
+    alpha    `(input) real scalar`                                             +
+             Scaling factor for the values in $y$.
+    B        `(input/output) real or complex valued GeMatrix`                  +
+             On entry the original matrix $B$.                                +
+             On exit overwritten with $\alpha\,B$.
+################################################################################
+#
+#  The following CODEREFs are automatically created stubs.
+#
+################################################################################
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename VY>                                   |
+|      typename RestrictTo<IsTinyVector<VY>::value,                         |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, VY &&y);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameVYtypenameRestrictToIsTin]
+                         [yVectorVYvalue,voidType                           ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsGbMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsGbM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsGeTinyMatrix<MB>::value,                       |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsGeT]
+                         [inyMatrixMBvalue,voidType                         ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsHbMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsHbM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsHeMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsHeM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsHpMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsHpM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsSbMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsSbM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsSpMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsSpM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsSyMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsSyM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsTbMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsTbM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsTpMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsTpM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+
+*--[CODEREF]----------------------------------------------------------------*
+|                                                                           |
+|  template <typename ALPHA, typename MB>                                   |
+|      typename RestrictTo<IsTrMatrix<MB>::value,                           |
+|               void>::Type                                                 |
+|      scal(const ALPHA &alpha, MB &&B);                                    |
+|                                                                           |
+*---------------------------------------------------------------------------*
+                         [c:@N@flens@N@blas@FT@>2#T#Tscal#&1t0.0#&t0.1#templ]
+                         [atetypenameALPHA,typenameMBtypenameRestrictToIsTrM]
+                         [atrixMBvalue,voidType                             ]
+
+    Defined in namespace `flens::blas`.
+    Function `scal` with 2 template parameters.
+
+
+

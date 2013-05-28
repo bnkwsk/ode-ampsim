@@ -1,0 +1,57 @@
+===========
+First Steps                                                             [TOC]
+===========
+
+The term *general matrix* refers to a matrix that is not necessarily square or
+symmetric.  Further, *full storage* denotes that all $mn$ elements of a
+$m \times n$ matrix get stored.
+ - FLENS realizes this matrix type in class __GeMatrix__.
+ - For the full storage scheme there are three classes
+     - __FullStorage__,
+     - __FullStorageView__ and
+     - __ConstFullStorageView__.
+   The different storage schemes are used for providing matrix views (see below)
+   and ensure const correctness. In short one can say `View` means that no
+   memory gets allocated and `Const` that only read-access is granted.
+
+For *dense vectors* FLENS defines the
+ - class __DenseVector__ and
+ - corresponding storage schemes
+     - __Array__, 
+     - __ArrayView__ and
+     - __ConstArrayView__.
+
+In a first example we allocate and initialize a general matrix and play around
+with it.
+
+Example Code
+============
+:import: flens/examples/tut01-page01-example.cc [stripped, downloadable]
+
+Comments on Example Code
+========================
+:import: flens/examples/tut01-page01-example.cc [brief]
+
+Compile and Run
+===============
+
+   *--[SHELL]-----------------------------------------------------------------*
+   |                                                                          |
+   |  cd flens/examples                                                       |
+   |  g++ -Wall -std=c++11 -I../.. tut01-page01-example.cc                    |
+   |  ./a.out                                                                 |
+   |                                                                          |
+   *--------------------------------------------------------------------------*
+
+:links: __GeMatrix__        -> doc:flens/matrixtypes/general/impl/gematrix
+        __FullStorage__     -> doc:flens/storage/fullstorage/fullstorage
+        __FullStorageView__ -> doc:flens/storage/fullstorage/fullstorageview
+        __ConstFullStorageView__ -> doc:flens/storage/fullstorage/constfullstorageview
+        __DenseVector__     -> doc:flens/vectortypes/impl/densevector
+        __Array__           -> doc:flens/storage/array/array
+        __ArrayView__       -> doc:flens/storage/array/arrayview
+        __ConstArrayView__  -> doc:flens/storage/array/constarrayview
+
+
+:navigate: __up__    -> doc:flens/examples/tutorial
+           __next__  -> doc:flens/examples/tut01-page02
