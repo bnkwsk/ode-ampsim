@@ -11,11 +11,12 @@
 template<typename SampleType, typename ElementType>
 class PipeliningProcessor
 {
-protected:
-    std::vector<ElementType *> elements;
+private:
     std::vector<LockingQueue<SampleType> *> queues;
     LockingQueue<SampleType> *input;
     LockingQueue<SampleType> *output;
+protected:
+    std::vector<ElementType *> elements;
 public:
     PipeliningProcessor()
     {

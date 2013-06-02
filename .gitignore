@@ -1,5 +1,6 @@
 *.wav
 inz
+src/cpp/generated
 bin/simulator
 bin/build
 intermediate

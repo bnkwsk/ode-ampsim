@@ -35,7 +35,7 @@ public:
 template<typename Circuit>
 class CircuitBlock : public ProcessorElement
 {
-protected:
+private:
     IntegerVectorType piv;
     MatrixType Jacobi;
     VectorType x;
@@ -48,11 +48,10 @@ protected:
     VectorType iCP;
     VectorType xPlus;
     VectorType xMinus;
-    int equationCount;
+    Circuit circuit;
     int capacitorCount;
     double fS;
-    Circuit circuit;
-
+    int equationCount;
     const flens::Underscore<VectorType::IndexType> _;
 
     // calculate the Jacobi's matrix
@@ -105,11 +104,6 @@ protected:
 
     double process(double uIn)
     {
-        // predict the state vector value using simple extrapolation
-        //xPrevPrev = xPrev;
-        //xPredict = 2.0 * xPrev - xPrevPrev;
-        //x = xPredict;
-
         do
         {
             // save the previous state vector
@@ -158,7 +152,6 @@ protected:
         fS = _fS;
         return x_bias;
     }
-    
 public:
     CircuitBlock(double _fS) : ProcessorElement(), fS(_fS)
     {

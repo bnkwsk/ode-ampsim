@@ -26,8 +26,8 @@ protected:
     const double r_g1 = 1e6; const double g_g1 = 1.0f / r_g1;
     const double r_k1 = 2700; const double g_k1 = 1.0f / r_k1;
     const double r_a1 = 100e3; const double g_a1 = 1.0f / r_a1;
-    const double r_2 = 470e3; const double g_2 = 1.0f / r_2; // 1.46e6
-    const double r_g2 = 1e6; const double g_g2 = 1.0f / r_g2; // 10e3
+    const double r_2 = 470e3; const double g_2 = 1.0f / r_2;
+    const double r_g2 = 1e6; const double g_g2 = 1.0f / r_g2;
     const double r_k2 = 1800; const double g_k2 = 1.0f / r_k2;
     const double r_a2 = 100e3; const double g_a2 = 1.0f / r_a2;
     const double r_3 = 470e3; const double g_3 = 1.0f / r_3;
@@ -85,6 +85,7 @@ template <typename T>
 inline int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
+
 // anode current function
 double _i_a(double u_ak, double u_gk)
 {

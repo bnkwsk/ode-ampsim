@@ -1,8 +1,5 @@
 #define VIENNACL_WITH_OPENCL
 
-#include <iostream>
-#include <streambuf>
-
 #include "viennacl/ocl/backend.hpp"
 
 #include "SimulationRunner.hpp"
@@ -28,7 +25,6 @@ int main(int argc, char **argv)
     program.add_kernel("ComplexPointwiseMultiplyAdd");
 
     SimulationRunner runner;
-    // runner.run("blues_in.wav", "C414_TS_1_inch_edge_pres_3.wav", "blues_out.wav");
     GUI gui(app, runner);
     runner.join();
 

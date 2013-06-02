@@ -45,7 +45,7 @@ class GUI
     {
         Gtk::ProgressBar *progressBar;
         builder->get_widget("progressBar", progressBar);
-        if(runner.isRunning())
+        if(runner.isRunning() && !runner.isInterrupted())
         {
             progressBar->set_fraction(runner.getProgress());
             return true;
@@ -85,10 +85,10 @@ class GUI
 
     void stopSimulationRequested()
     {
-        runner.interrupt();
+        if (runner.isRunning())
+            runner.interrupt();
         if (!progressTimer.empty())
             progressTimer.disconnect();
-        runner.join();
         updateProgressBar();
     }
 
@@ -98,58 +98,58 @@ class GUI
         app->quit();
     }
 
-    public:
-        GUI(Glib::RefPtr<Gtk::Application> _app, SimulationRunner &_runner) : app(_app), runner(_runner)
-        {
-            builder = Gtk::Builder::create_from_file("gui.glade");
-            builder->get_widget("mainWindow", mainWindow);
+public:
+    GUI(Glib::RefPtr<Gtk::Application> _app, SimulationRunner &_runner) : app(_app), runner(_runner)
+    {
+        builder = Gtk::Builder::create_from_file("gui.glade");
+        builder->get_widget("mainWindow", mainWindow);
 
-            Gtk::Button* closeButton;
-            builder->get_widget("closeButton", closeButton);
-            closeButton->signal_clicked().connect(
-                sigc::mem_fun(this, &GUI::stopSimulationRequested));
-            mainWindow->signal_hide().connect(
-                sigc::mem_fun(this, &GUI::quitCallback));
+        Gtk::Button* closeButton;
+        builder->get_widget("closeButton", closeButton);
+        closeButton->signal_clicked().connect(
+            sigc::mem_fun(this, &GUI::stopSimulationRequested));
+        mainWindow->signal_hide().connect(
+            sigc::mem_fun(this, &GUI::quitCallback));
 
-            builder->get_widget("inputFile", inputFileChooserButton);
-            inputFileChooserButton->signal_selection_changed().connect(
-                sigc::mem_fun(this, &GUI::inputFileChanged));
-            builder->get_widget("impulseFile", impulseResponseFileChooserButton);
-            impulseResponseFileChooserButton->signal_selection_changed().connect(
-                sigc::mem_fun(this, &GUI::impulseResponseFileChanged));
+        builder->get_widget("inputFile", inputFileChooserButton);
+        inputFileChooserButton->signal_selection_changed().connect(
+            sigc::mem_fun(this, &GUI::inputFileChanged));
+        builder->get_widget("impulseFile", impulseResponseFileChooserButton);
+        impulseResponseFileChooserButton->signal_selection_changed().connect(
+            sigc::mem_fun(this, &GUI::impulseResponseFileChanged));
 
-            Gtk::Button* outputFileButton;
-            builder->get_widget("outputFileButton", outputFileButton);
-            builder->get_widget(
-                "outputFileChooserDialog", outputFileChooserDialog);
-            outputFileButton->signal_clicked().connect(
-                sigc::mem_fun(
-                    outputFileChooserDialog, &Gtk::FileChooserDialog::show));
+        Gtk::Button* outputFileButton;
+        builder->get_widget("outputFileButton", outputFileButton);
+        builder->get_widget(
+            "outputFileChooserDialog", outputFileChooserDialog);
+        outputFileButton->signal_clicked().connect(
+            sigc::mem_fun(
+                outputFileChooserDialog, &Gtk::FileChooserDialog::show));
 
-            Gtk::Button* outputFileChooserDialogCloseButton;
-            builder->get_widget(
-                "outputFileChooserDialogCloseButton",
-                outputFileChooserDialogCloseButton);
-            outputFileChooserDialogCloseButton->signal_clicked().connect(
-                sigc::mem_fun(
-                    outputFileChooserDialog, &Gtk::FileChooserDialog::hide));
+        Gtk::Button* outputFileChooserDialogCloseButton;
+        builder->get_widget(
+            "outputFileChooserDialogCloseButton",
+            outputFileChooserDialogCloseButton);
+        outputFileChooserDialogCloseButton->signal_clicked().connect(
+            sigc::mem_fun(
+                outputFileChooserDialog, &Gtk::FileChooserDialog::hide));
 
-            Gtk::Button* outputFileChooserDialogOKButton;
-            builder->get_widget(
-                "outputFileChooserDialogOKButton",
-                outputFileChooserDialogOKButton);
-            outputFileChooserDialogOKButton->signal_clicked().connect(
-                sigc::mem_fun(
-                    this, &GUI::outputFileChooserDialogOKButtonClicked));
-            outputFileChooserDialog->signal_file_activated().connect(
-                sigc::mem_fun(
-                    this, &GUI::outputFileChooserDialogOKButtonClicked));
+        Gtk::Button* outputFileChooserDialogOKButton;
+        builder->get_widget(
+            "outputFileChooserDialogOKButton",
+            outputFileChooserDialogOKButton);
+        outputFileChooserDialogOKButton->signal_clicked().connect(
+            sigc::mem_fun(
+                this, &GUI::outputFileChooserDialogOKButtonClicked));
+        outputFileChooserDialog->signal_file_activated().connect(
+            sigc::mem_fun(
+                this, &GUI::outputFileChooserDialogOKButtonClicked));
 
-            Gtk::Button* runButton;
-            builder->get_widget("runButton", runButton);
-            runButton->signal_clicked().connect(
-                sigc::mem_fun(this, &GUI::runButtonClicked));
+        Gtk::Button* runButton;
+        builder->get_widget("runButton", runButton);
+        runButton->signal_clicked().connect(
+            sigc::mem_fun(this, &GUI::runButtonClicked));
 
-            app->run(*mainWindow);
-        }
+        app->run(*mainWindow);
+    }
 };

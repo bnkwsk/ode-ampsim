@@ -18,11 +18,9 @@ program_LIBRARIES :=
 CXX := g++-4.8
 
 CXXFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) -pipe -std=c++11 -O3 -pthread -lpthread `pkg-config gtkmm-3.0 --cflags` -DNDEBUG -flto -march=native -ggdb3
-#CXXFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) -pipe -std=c++11 -pthread -lpthread `pkg-config gtkmm-3.0 --cflags`
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 LFLAGS += -lsndfile `pkg-config gtkmm-3.0 --libs` -lOpenCL -ltcmalloc -flto
-#LFLAGS += -lcln -lsndfile `pkg-config gtkmm-3.0 --libs` -lOpenCL
 
 .PHONY: all clean distclean
 

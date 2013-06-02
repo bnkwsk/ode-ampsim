@@ -17,14 +17,14 @@
 
 class CabinetSimulator : public ProcessorElement
 {
-protected:
+private:
     typedef float ScalarType;
     typedef std::vector<ScalarType> CPUVector;
     typedef viennacl::matrix<ScalarType> GPUMatrix;
     typedef viennacl::vector<ScalarType> GPUVector;
     typedef viennacl::scalar<ScalarType> GPUScalar;
 
-    const int blockSize = 1024 * 8; // it has to be a power of 2
+    const int blockSize = 1024; // it has to be a power of 2
     int filterPartQuantity;
 
     CPUVector cpuInput;

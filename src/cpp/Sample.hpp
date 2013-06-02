@@ -5,19 +5,19 @@ class Sample
     double value;
     bool last;
 
-    public:
-        Sample(double v=0.0, bool l=false) : value(v), last(l)
-        {
-            //
-        }
+public:
+    Sample(double v=0.0, bool l=false) : value(v), last(l)
+    {
+        //
+    }
 
-        double getValue()
-        {
-            return value;
-        }
+    double getValue()
+    {
+        return value;
+    }
 
-        bool isLast()
-        {
-            return last;
-        }
+    bool isLast()
+    {
+        return last;
+    }
 };
