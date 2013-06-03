@@ -3,7 +3,6 @@
 #include <cmath>
 #include <thread>
 #include <vector>
-#include <iostream>
 
 #include <flens/flens.cxx>
 
